@@ -7,6 +7,8 @@ android {
     namespace = "com.example.ch10_notification"
     compileSdk = 34
 
+    viewBinding.isEnabled = true
+
     defaultConfig {
         applicationId = "com.example.ch10_notification"
         minSdk = 24
