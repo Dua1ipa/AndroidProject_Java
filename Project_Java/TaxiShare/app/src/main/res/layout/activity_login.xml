@@ -38,8 +38,9 @@
                 android:gravity="center"
                 android:layout_marginLeft="20dp">
                 <EditText
+                    android:id="@+id/ID"
                     android:layout_width="210dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
@@ -67,12 +68,24 @@
             <EditText
                 android:id="@+id/PW"
                 android:layout_width="300dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 tools:ignore="Autofill,TextFields" />
         </com.google.android.material.textfield.TextInputLayout>
+
+        <CheckBox
+            android:id="@+id/checkBox"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="3dp"
+            android:layout_gravity="right"
+            android:text="자동로그인"
+            android:textColor="@color/black"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:buttonTint="@color/black" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_login"
@@ -84,7 +97,9 @@
             android:background="@drawable/btn_bg"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="@string/login" />
+            android:text="@string/login"
+            android:textSize="20dp"
+            android:textStyle="bold"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -100,6 +115,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:text="@string/find" />
+            <TextView
+                android:text="    |    "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"/>
+            <TextView
+                android:id="@+id/text_signUp"
+                android:textColor="@color/blue_btn_bg_pressed_color"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/signUp" />
         </LinearLayout>
     </LinearLayout>
 
