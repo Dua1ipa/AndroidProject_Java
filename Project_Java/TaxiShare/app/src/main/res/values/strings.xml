@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">Project</string>
+    <string name="email">아이디</string>
+    <string name="password">비밀번호</string>
+    <string name="re_password">비밀번호 재입력</string>
+    <string name="find">아이디 or 비밀번호 찾기</string>
+    <string name="login">로그인</string>
+    <string name="signUp">회원가입</string>
+
+    <string name="naver_client_id"></string>
+    <string name="naver_client_secret"></string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="start_array">
+        <item>가톨릭관동대학교 정문</item>
+        <item>가톨릭관동대학교 북문</item>
+        <item>강릉시외버스터미널</item>
+    </string-array>
+    <string-array name="end_array">
+        <item>강릉시외버스터미널</item>
+        <item>가톨릭관동대학교 정문</item>
+        <item>가톨릭관동대학교 북문</item>
+    </string-array>
+
+    <string-array name="max_people_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+</resources>

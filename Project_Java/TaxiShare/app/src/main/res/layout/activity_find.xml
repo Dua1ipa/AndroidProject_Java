@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="#ffffff">
+    <ImageButton
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:background="@drawable/back" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_width="@dimen/fixWidth"
+            android:layout_marginLeft="16dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="44dp"
+                android:layout_gravity="left"
+                android:background="@drawable/title"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:layout_width="@dimen/fixWidth"
+            android:layout_marginLeft="16dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="41dp"
+                android:layout_height="16dp"
+                android:layout_marginTop="88dp"
+                android:background="@drawable/ic_emil_text"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/id"
+                    android:layout_width="218dp"
+                    android:layout_height="50dp"
+                    android:backgroundTint="#41AFE5"
+                    android:hint="abc"
+                    android:textColor="#000000"
+                    android:textColorHint="#BDBDBD"
+                    android:textSize="21dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.145"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView4"
+                    tools:ignore="MissingConstraints" />
+                <TextView
+                    android:id="@+id/email_textView"
+                    android:layout_width="115dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:text="@cku.ac.kr"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="#000000"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="@dimen/fixWidth"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <EditText
+                android:id="@+id/checkNum"
+                android:layout_width="358dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="104dp"
+                android:visibility="gone"
+                android:layout_marginLeft="16dp"
+                android:backgroundTint="#41AFE5"
+                android:hint="인증번호"
+                android:textColor="#000000"
+                android:textColorHint="#BDBDBD"
+                android:textSize="21dp"/>
+            <ImageView
+                android:layout_marginLeft="16dp"
+                android:id="@+id/email_chk"
+                android:layout_width="222dp"
+                android:visibility="gone"
+                android:layout_height="51dp"
+                android:layout_marginTop="22dp"
+                android:background="@drawable/email_chk" />
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="124dp"
+            android:layout_gravity="center"
+            android:background="@drawable/check_button" />
+        <ImageButton
+            android:id="@+id/btn_check2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginTop="124dp"
+            android:layout_gravity="center"
+            android:background="@drawable/check_button"/>
+    </LinearLayout>
+
+</LinearLayout>
