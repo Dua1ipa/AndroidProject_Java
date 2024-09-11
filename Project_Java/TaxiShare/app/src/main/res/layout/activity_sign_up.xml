@@ -67,9 +67,9 @@
                 <EditText
                     android:id="@+id/ID"
                     android:layout_width="210dp"
-                    android:layout_height="40dp"
+                    android:layout_height="50dp"
                     android:hint="@string/email"
-                    android:inputType="textEmailAddress"
+                    android:inputType="text"
                     android:maxLines="1"
                     tools:ignore="Autofill,TextFields" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -103,6 +103,7 @@
                     android:contentDescription="메일인증"
                     android:src="@drawable/mail"/>
                 <TextView
+                    android:id="@+id/confirmEmail"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -137,9 +138,9 @@
             <EditText
                 android:id="@+id/PW"
                 android:layout_width="300dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:hint="@string/password"
-                android:inputType="textEmailAddress"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 tools:ignore="Autofill,TextFields" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -154,9 +155,9 @@
             <EditText
                 android:id="@+id/re_PW"
                 android:layout_width="300dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:hint="@string/re_password"
-                android:inputType="textEmailAddress"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 tools:ignore="Autofill,TextFields" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -171,9 +172,9 @@
             <EditText
                 android:id="@+id/nickName"
                 android:layout_width="300dp"
-                android:layout_height="40dp"
+                android:layout_height="50dp"
                 android:hint="@string/nickName"
-                android:inputType="textEmailAddress"
+                android:inputType="text"
                 android:maxLines="1"
                 tools:ignore="Autofill,TextFields" />
         </com.google.android.material.textfield.TextInputLayout>
