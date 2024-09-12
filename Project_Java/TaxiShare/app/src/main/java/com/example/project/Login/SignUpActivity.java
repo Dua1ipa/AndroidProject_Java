@@ -2,6 +2,7 @@ package com.example.project.Login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -10,10 +11,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.example.project.Email.GenRandNum;
+import com.example.project.Email.SendCode;
 import com.example.project.MainActivity;
 import com.example.project.PopUp.EmailPopup;
 import com.example.project.R;
@@ -29,6 +34,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import javax.mail.internet.AddressException;
+
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
 
@@ -41,11 +48,12 @@ public class SignUpActivity extends AppCompatActivity {
 
     private ProgressDialog progressDialog;
 
-
-    private boolean verifyEmail = false;  // 이메일 검증
+    private boolean verifyEmail = false;  //이메일
+    private static final String KEY = "777";
     private String pwPattern = "(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+";
     private String idPattern =  "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
+    private ActivityResultLauncher<Intent> launcher;
 
     EditText ID, PW, re_PW, nickName;
     TextView confirmEmail;
@@ -73,16 +81,40 @@ public class SignUpActivity extends AppCompatActivity {
         String re_pw = re_PW.getText().toString();
         String nick = nickName.getText().toString();
 
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            if(result.getResultCode() == RESULT_OK){
+                Intent intent = result.getData();
+                if(intent != null){
+                    String resultValue = intent.getStringExtra("result");
+                    if(resultValue.equals("success")){
+                        verifyEmail = true;
+                        confirmEmail.setVisibility(View.INVISIBLE);
+                        confirmEmail.setTextColor(Color.WHITE);
+
+                        ID.setEnabled(false);  //이메일 입력창 입력 비활성화
+                    }
+                }
+            }
+        });
+
         confirmEmail = findViewById(R.id.confirmEmail);
         confirmEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(TextUtils.isEmpty(id)){
+                String id = ID.getText().toString();
+                String emailCode = new GenRandNum().genRandNum();
+                if(id.isEmpty()){
                     ID.setError("아이디를 입력하세요");
                     ID.requestFocus();
                 }else{
-                    showToast("인증번호를 메일로 전송했습니다");
-                    Intent intent = new Intent(SignUpActivity.this, EmailPopup.class);
+                    String email = id + "@cku.ac.kr";
+                    SendCode sendCode = new SendCode(email, emailCode);
+                    if(sendCode.sendEmail()) {
+                        showToast("인증번호를 메일로 전송했습니다");
+                        Intent intent = new Intent(SignUpActivity.this, EmailPopup.class);
+                        intent.putExtra(KEY, emailCode);
+                        launcher.launch(intent);
+                    }
                 }
             }
         });
@@ -147,7 +179,6 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     protected void init(){}
