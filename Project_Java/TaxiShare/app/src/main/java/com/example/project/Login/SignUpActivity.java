@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<Intent> launcher;
 
+    ImageView img_mail;
     EditText ID, PW, re_PW, nickName;
     TextView confirmEmail;
     AppCompatButton btn_signUp;
@@ -75,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
         PW = findViewById(R.id.PW);
         re_PW = findViewById(R.id.re_PW);
         nickName = findViewById(R.id.nickName);
+        img_mail = findViewById(R.id.img_mail);
 
         String id = ID.getText().toString();
         String pw = PW.getText().toString();
@@ -88,8 +91,9 @@ public class SignUpActivity extends AppCompatActivity {
                     String resultValue = intent.getStringExtra("result");
                     if(resultValue.equals("success")){
                         verifyEmail = true;
-                        confirmEmail.setVisibility(View.INVISIBLE);
-                        confirmEmail.setTextColor(Color.WHITE);
+                        confirmEmail.setText("이메일 인증 완료");
+                        confirmEmail.setTextColor(Color.GREEN);
+                        img_mail.setImageResource(R.drawable.img_check);
 
                         ID.setEnabled(false);  //이메일 입력창 입력 비활성화
                     }

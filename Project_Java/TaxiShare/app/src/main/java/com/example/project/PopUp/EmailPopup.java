@@ -22,6 +22,7 @@ public class EmailPopup extends AppCompatActivity {
 
     private CountDownTimer timer;
     private boolean verifyEmail = true;
+    private static final String KEY = "777";
 
     TextView timerText;
     EditText codeNum;
@@ -56,7 +57,7 @@ public class EmailPopup extends AppCompatActivity {
             public void onTick(long millisUntilFinished) {
                 long min = millisUntilFinished / 1000 / 60;
                 long sec = (millisUntilFinished / 1000) % 60;
-                String timeFormat = String.format(Locale.getDefault(), "유효시간이 %02d:%02d 남았습니다", min, sec);
+                String timeFormat = String.format(Locale.getDefault(), "유효시간 %02d분 %02d초 ", min, sec);
                 timerText.setText(timeFormat);
             }
 
@@ -93,11 +94,12 @@ public class EmailPopup extends AppCompatActivity {
     private void getIntentData(String condeNum){
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
+        String code = codeNum.getText().toString();
 
         // 이메일 인증할 때 인텐트를 통해 키값 전달
-        if(intent.hasExtra("3")){
-            String data = bundle.getString("3");
-            if(codeNum.equals(data)){
+        if(intent.hasExtra(KEY)){
+            String data = bundle.getString(KEY);
+            if(code.equals(data)){
                 showToast("이메일 인증에 성공했습니다.");
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("result", "success");

@@ -12,7 +12,7 @@ public class GenRandNum {
         Random random = new Random();
 
         StringBuilder result = new StringBuilder(codeLen);  //인증번호 길이 설정
-        for(int i = 0; i < 7; i++){
+        for(int i = 0; i < 4; i++){
             result.append(digits.charAt(random.nextInt(digits.length())));
         }
         return result.toString();
