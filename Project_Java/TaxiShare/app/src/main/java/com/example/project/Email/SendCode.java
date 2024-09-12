@@ -54,7 +54,7 @@ public class SendCode {
 
             //전송 메세지 내용
             message.setSubject("인증번호");
-            message.setText("인증번호는 [" + code + "] 입니다. 인증번호를 입력해주세요."); 
+            message.setText("인증번호는 [ " + code + " ] 입니다. 인증번호를 입력해주세요.");
             
             Thread thread = new Thread(new Runnable() {
                 @Override
