@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 
+import com.bumptech.glide.Glide;
 import com.example.project.Data.UserInfo;
 import com.example.project.Email.GenRandNum;
 import com.example.project.Email.SendCode;
@@ -27,6 +29,8 @@ import com.example.project.MainActivity;
 import com.example.project.PopUp.EmailPopup;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,17 +41,25 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.kakao.sdk.user.model.User;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.mail.internet.AddressException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class SignUpActivity extends AppCompatActivity {
     private static final String TAG = "SignUpActivity";
 
-    private FirebaseAuth myAuth;
-    private FirebaseDatabase database;
+    FirebaseAuth myAuth;
+    FirebaseDatabase database;
+    FirebaseStorage firebaseStorage;
     private StorageReference storageRef;
     private DatabaseReference usersRef;
     private Uri imgUri;
@@ -61,7 +73,9 @@ public class SignUpActivity extends AppCompatActivity {
     private String idPattern =  "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
     private ActivityResultLauncher<Intent> launcher;
+    private ActivityResultLauncher<Intent> resultLauncher;
 
+    CircleImageView circleImg;
     ImageView img_mail;
     EditText ID, PW, re_PW, nickName;
     TextView confirmEmail;
@@ -73,9 +87,13 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         myAuth = FirebaseAuth.getInstance();
+
         database = FirebaseDatabase.getInstance();
-        storageRef = FirebaseStorage.getInstance().getReference("userProfImg");
         usersRef = FirebaseDatabase.getInstance().getReference("usersInfo");
+
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageRef = firebaseStorage.getReference();
+        StorageReference imgRef = storageRef.child("default_user.png");
 
         progressDialog = new ProgressDialog(this);
 
@@ -83,6 +101,7 @@ public class SignUpActivity extends AppCompatActivity {
         PW = findViewById(R.id.PW);
         re_PW = findViewById(R.id.re_PW);
         nickName = findViewById(R.id.nickName);
+        circleImg = findViewById(R.id.circleImg);
         img_mail = findViewById(R.id.img_mail);
 
         launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -101,6 +120,15 @@ public class SignUpActivity extends AppCompatActivity {
                 }
             }
         });
+
+        imgUri = null;  //선택된 이미지 uri
+        resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                if(result.getResultCode() == RESULT_CANCELED) return;
+                imgUri = result.getData().getData();
+
+                Glide.with(this).load(imgUri).into(circleImg);
+            }
+        );
 
         // 이메일 인증 버튼
         confirmEmail = findViewById(R.id.confirmEmail);
@@ -171,6 +199,26 @@ public class SignUpActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){  //사용자가 생성되면
                                     FirebaseUser user = myAuth.getCurrentUser();  //사용자 정보 가져오기
+
+                                    if(imgUri != null){
+                                        imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                            @Override
+                                            public void onSuccess(Uri uri) {
+                                                Glide.with(SignUpActivity.this).load(uri).into(circleImg);
+                                            }
+                                        });
+                                    }
+
+                                    Map<String, Object> userMap = new HashMap<>();
+                                    userMap.put("uid", user.getUid());
+                                    userMap.put("NickName", nick);
+                                    userMap.put("ID", id);
+
+                                    usersRef.child(user.getUid()).setValue(userMap);
+
+                                    progressDialog.dismiss();
+                                    Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                                    startActivity(intent);
                                     showToast("회원가입 성공");
                                 }else{  //사용자가 생성되지 않으면
 
@@ -187,18 +235,27 @@ public class SignUpActivity extends AppCompatActivity {
 
     // 앨범 함수 //
     private void openImgChooser(){
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, PICK_IMAGE_REQUEST);
+        Intent intent = new Intent(MediaStore.ACTION_PICK_IMAGES);
+        resultLauncher.launch(intent);
     }
 
-    // 사진 선택한 경우 처리함수 //
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == PICK_IMAGE_REQUEST && requestCode == RESULT_OK && data != null && data.getData() != null){
-            imgUri = data.getData();
-        }
+    private void upload(){
+        if(imgUri == null)  return;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        String fileName = "IMG_" + simpleDateFormat.format(new Date()) + ".png";
+
+        StorageReference imgRef = firebaseStorage.getReference("userProfImg/"+fileName);
+        imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
     }
 
     private String getFileExtension(Uri uri){

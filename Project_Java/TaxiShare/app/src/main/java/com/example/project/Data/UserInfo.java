@@ -10,9 +10,9 @@ public class UserInfo {
 
     public UserInfo(){};
 
-    public UserInfo(String NickName, String profileImg){
+    public UserInfo(String NickName, String ID){
         this.NickName = NickName;
-        this.profileImg = profileImg;
+        this.ID = ID;
     }
 
     public UserInfo(String NickName, String ID, String profileImg){

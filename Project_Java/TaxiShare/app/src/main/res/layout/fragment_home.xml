@@ -20,34 +20,22 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="1dp"
             android:src="@drawable/back_taxi" />
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_login"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="13dp"
-            android:layout_marginTop="184dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/radius_button"
-            android:textStyle="bold"
-            android:text="로그인" />
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="13dp"
-            android:layout_marginTop="185dp"
-            android:layout_marginEnd="209dp"
-            android:layout_marginBottom="19dp"
-            android:layout_toEndOf="@+id/btn_login"
+            android:layout_marginStart="7dp"
+            android:layout_marginTop="196dp"
+            android:layout_marginEnd="316dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/radius_button"
-            android:textStyle="bold"
-            android:text="방 개설" />
+            android:text="방 개설"
+            android:textStyle="bold" />
     </RelativeLayout>
 
     <LinearLayout
