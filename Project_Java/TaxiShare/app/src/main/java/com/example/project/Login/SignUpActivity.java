@@ -153,6 +153,14 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
+        // 이미지 버튼
+        circleImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openImgChooser();
+            }
+        });
+
         // 회원가입 버튼
         btn_signUp = findViewById(R.id.btn_signUp);
         btn_signUp.setOnClickListener(new View.OnClickListener() {
@@ -215,18 +223,25 @@ public class SignUpActivity extends AppCompatActivity {
                                     userMap.put("ID", id);
 
                                     usersRef.child(user.getUid()).setValue(userMap);
+                                    upload();
 
                                     progressDialog.dismiss();
                                     Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
                                     startActivity(intent);
                                     showToast("회원가입 성공");
                                 }else{  //사용자가 생성되지 않으면
-
+                                    Exception exception = task.getException();
+                                    if(exception instanceof FirebaseAuthUserCollisionException)
+                                        showToast("이미 존재하는 아이디입니다");
+                                    else
+                                        showToast("회원가입 실패");
+                                    progressDialog.dismiss(); 
                                 }
                             }
                         });
                     }else{  //이메일 인증이 완료되지 않은 경우
-
+                        confirmEmail.setText("이메일 인증을 완료해주세요");
+                        confirmEmail.setTextColor(Color.RED);
                     }
                 }
             }
@@ -239,21 +254,25 @@ public class SignUpActivity extends AppCompatActivity {
         resultLauncher.launch(intent);
     }
 
+    // 이미지 업로드 함수 //
     private void upload(){
-        if(imgUri == null)  return;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
+        if(imgUri == null)  return;  //사진 선택 안 했으면 반환
+
+        firebaseStorage = FirebaseStorage.getInstance();  //파이어베어스 관리 저장소 객체 생성
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");  //저장할 파일 이름이 중복되지 않도록 날짜 붙여주기
         String fileName = "IMG_" + simpleDateFormat.format(new Date()) + ".png";
 
-        StorageReference imgRef = firebaseStorage.getReference("userProfImg/"+fileName);
+        StorageReference imgRef = firebaseStorage.getReference("userProfImg/"+fileName);  //저장할 이름
         imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
+                showToast("업로드 성공");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-
+                showToast("업로드 실패");
             }
         });
     }
