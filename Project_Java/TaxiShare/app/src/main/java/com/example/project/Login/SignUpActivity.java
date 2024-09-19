@@ -60,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
     FirebaseAuth myAuth;
     FirebaseDatabase database;
     FirebaseStorage firebaseStorage;
+    FirebaseUser user;
     private StorageReference storageRef;
     private DatabaseReference usersRef;
     private Uri imgUri;
@@ -206,7 +207,7 @@ public class SignUpActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){  //사용자가 생성되면
-                                    FirebaseUser user = myAuth.getCurrentUser();  //사용자 정보 가져오기
+                                    user = myAuth.getCurrentUser();  //사용자 정보 가져오기
 
                                     if(imgUri != null){
                                         imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
@@ -235,7 +236,7 @@ public class SignUpActivity extends AppCompatActivity {
                                         showToast("이미 존재하는 아이디입니다");
                                     else
                                         showToast("회원가입 실패");
-                                    progressDialog.dismiss(); 
+                                    progressDialog.dismiss();
                                 }
                             }
                         });
@@ -260,30 +261,24 @@ public class SignUpActivity extends AppCompatActivity {
 
         firebaseStorage = FirebaseStorage.getInstance();  //파이어베어스 관리 저장소 객체 생성
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");  //저장할 파일 이름이 중복되지 않도록 날짜 붙여주기
-        String fileName = "IMG_" + simpleDateFormat.format(new Date()) + ".png";
+        String uid = user.getUid();
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");  //저장할 파일 이름이 중복되지 않도록 사용자 uid로 설정
+        String fileName = uid + "_" + simpleDateFormat.format(new Date()) + ".png";  // uid_년도.png 형식으로 저장
 
         StorageReference imgRef = firebaseStorage.getReference("userProfImg/"+fileName);  //저장할 이름
         imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                showToast("업로드 성공");
+                Log.d(TAG, "이미지 업로드 성공");
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                showToast("업로드 실패");
+                Log.d(TAG, "이미지 업로드 실패");
             }
         });
     }
-
-    private String getFileExtension(Uri uri){
-        return Objects.requireNonNull(getContentResolver().getType(uri).split("/"))[1];
-    }
-
-    protected void init(){}
-
-    private void signUp(){}
 
     private void showToast(String msg){Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();}
 
