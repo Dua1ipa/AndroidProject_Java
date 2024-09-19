@@ -13,6 +13,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -38,6 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -58,6 +60,7 @@ public class MyPageFragment extends Fragment {
 
     TextView textNick, textEmail;
     CircleImageView imageView;
+    AppCompatButton btn_editProfile;
 
     private ProgressBar progressBar;
 //    ProgressDialog progressDialog;
@@ -81,14 +84,15 @@ public class MyPageFragment extends Fragment {
 
         showUserInfo();
 
-        //프로그래스바 숨기기
-        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);  //프로그래스바 숨기기
 
         imgUri = null;  //선택된 이미지 uri
         resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                     if(result.getResultCode() == RESULT_CANCELED) return;
                     imgUri = result.getData().getData();
-                    Glide.with(this).load(imgUri).into(imageView);
+                    Glide.with(this).load(imgUri).into(imageView);  //선택한 이미지 보여주기
+                    deleteImg();  //전 이미지 삭제하기
+                    upload();     //현재 이미지 업로드하기
                 }
         );
 
@@ -98,7 +102,14 @@ public class MyPageFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 openImgChooser();
-                upload();
+            }
+        });
+
+        btn_editProfile = viewGroup.findViewById(R.id.btn_editProfile);
+        btn_editProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -113,16 +124,21 @@ public class MyPageFragment extends Fragment {
 
         if(user == null) return;
         else{
-            storageReference = FirebaseStorage.getInstance().getReference().child("userProfImg/"+uid+".png");
-            storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            storageReference = FirebaseStorage.getInstance().getReference().child("userProfImg/");
+            storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                 @Override
-                public void onSuccess(Uri uri) {
-                    Glide.with(getActivity()).load(uri).into(imageView);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Log.d(TAG, "프로필 사진 없음");
+                public void onSuccess(ListResult listResult) {
+                    for(StorageReference item : listResult.getItems()){
+                        String imgName = item.getName();
+                        if(imgName.startsWith(uid) && imgName.endsWith(".png")){
+                            item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    Glide.with(getActivity()).load(uri).into(imageView);
+                                }
+                            });
+                        }
+                    }
                 }
             });
 
@@ -152,7 +168,41 @@ public class MyPageFragment extends Fragment {
         resultLauncher.launch(intent);
     }
 
-    // 이미지 재업로드 함수 //
+    // 이미지 업로드 전 이전 이미지 삭제 함수 //
+    private void deleteImg(){
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        Log.d(TAG, "uid : " + uid);
+
+        if(user == null) return;
+        else {
+            storageReference = FirebaseStorage.getInstance().getReference().child("userProfImg/");
+            storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                @Override
+                public void onSuccess(ListResult listResult) {
+                    for (StorageReference item : listResult.getItems()) {
+                        String imgName = item.getName();
+                        if (imgName.startsWith(uid) && imgName.endsWith(".png")) {
+                            item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    StorageReference deleteRef = FirebaseStorage.getInstance().getReferenceFromUrl(uri.toString());
+                                    deleteRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Log.d(TAG, "이미지 삭제 성공");
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // 이미지 업로드 함수 //
     private void upload(){
         if(imgUri == null)  return;  //사진 선택 안 했으면 반환
 
@@ -160,8 +210,8 @@ public class MyPageFragment extends Fragment {
 
         String uid = user.getUid();
 
-        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");  //저장할 파일 이름이 중복되지 않도록 사용자 uid로 설정
-        String fileName = uid + ".png";  // uid_년도.png 형식으로 저장
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");  //저장할 파일 이름이 중복되지 않도록 사용자 uid로 설정
+        String fileName = uid + "_" + simpleDateFormat.format(new Date()) + "_" +".png";      //
 
         StorageReference imgRef = firebaseStorage.getReference("userProfImg/"+fileName);  //저장할 위치
         imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

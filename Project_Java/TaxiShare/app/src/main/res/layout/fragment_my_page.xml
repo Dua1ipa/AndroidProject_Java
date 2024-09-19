@@ -160,18 +160,17 @@
             android:layout_marginEnd="10dp"
             android:layout_marginTop="10dp"
             android:orientation="horizontal">
-            <Button
-                android:id="@+id/btn_profile"
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_editProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_weight="1"
                 android:background="@drawable/radius_button"
-                android:text="프로필 편집"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <Button
+                android:text="프로필 편집하기"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_mail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -179,10 +178,9 @@
                 android:layout_weight="1"
                 android:background="@drawable/radius_button"
                 android:text="문의하기"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-            <Button
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_logout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -190,9 +188,8 @@
                 android:layout_weight="1"
                 android:background="@drawable/radius_button"
                 android:text="로그아웃"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@color/black"
+                android:textSize="16sp" />
         </LinearLayout>
     </LinearLayout>
 
