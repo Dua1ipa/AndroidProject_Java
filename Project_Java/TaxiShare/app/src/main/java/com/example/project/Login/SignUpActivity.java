@@ -263,8 +263,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         String uid = user.getUid();
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");  //저장할 파일 이름이 중복되지 않도록 사용자 uid로 설정
-        String fileName = uid + "_" + simpleDateFormat.format(new Date()) + ".png";  // uid_년도.png 형식으로 저장
+        //SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy");  //저장할 파일 이름이 중복되지 않도록 사용자 uid로 설정
+        String fileName = uid + ".png";  // uid_년도.png 형식으로 저장
 
         StorageReference imgRef = firebaseStorage.getReference("userProfImg/"+fileName);  //저장할 이름
         imgRef.putFile(imgUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
