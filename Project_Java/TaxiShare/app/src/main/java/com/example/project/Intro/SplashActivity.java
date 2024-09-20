@@ -17,11 +17,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.project.Login.LoginActivity;
+import com.example.project.MainActivity;
 import com.example.project.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class SplashActivity extends AppCompatActivity {
     private static final String TAG = "SplashActivity";
 
+    private FirebaseAuth auth;
+
+    SharedPreferences sharedPreferences;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.INTERNET};
 
     @Override
@@ -30,34 +36,28 @@ public class SplashActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_splash);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                Intent intent = new Intent(SplashActivity.this, StartActivity.class);
-                startActivity(intent);
-                finish();
+        auth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = auth.getCurrentUser();
+
+        sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE); 
+        boolean isLoggedIn = sharedPreferences.getBoolean("autoLogin", false);
+
+        if(currentUser != null && isLoggedIn){
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }else{
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent intent = new Intent(SplashActivity.this, StartActivity.class);
+                    startActivity(intent);
+                    finish();
 //                nextActivity();
-            }
-        },1000);
+                }
+            },1000);
+        }
 
-    }
-
-    // login 상태  체크 //
-    private void nextActivity(){
-//        // SharedPreferences에서 login 정보 있는 지 확인한다
-//        SharedPreferences sharedPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-//
-//        // 있을 경우 isLoggedIn = true
-//        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
-//        if (isLoggedIn) {  //로그인 기록 있으면 메인 화면으로 이동
-//            startActivity(new Intent(Splash.this, MainActivity.class));
-//            finish();
-//        } else {  //로그인 기록 없으면 로그인화면으로 이동
-//            startActivity(new Intent(Splash.this, LoginActivity.class));
-//            finish();
-//        }
-        startActivity(new Intent(SplashActivity.this, StartActivity.class));
-        finish();
     }
 
     private class splashHandler implements Runnable{

@@ -14,7 +14,7 @@
         android:layout_height="50dp"
         android:orientation="horizontal">
         <ImageView
-            android:id="@+id/taxiRoomBack"
+            android:id="@+id/btn_back"
             android:layout_width="40dp"
             android:layout_height="30dp"
             android:src="@drawable/back"
@@ -52,7 +52,7 @@
                 android:textStyle="bold"
                 android:textSize="18sp" />
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/roomNameInputEditText"
+                android:id="@+id/edit_roomName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
@@ -117,7 +117,7 @@
                     android:text="출발지"
                     android:textSize="18sp" />
                 <Spinner
-                    android:id="@+id/departureSpinner"
+                    android:id="@+id/depart"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:entries="@array/start_array" />
@@ -138,7 +138,7 @@
                     android:textStyle="bold"
                     android:textSize="18sp" />
                 <Spinner
-                    android:id="@+id/destinationSpinner"
+                    android:id="@+id/arrive"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:entries="@array/end_array" />
@@ -163,6 +163,7 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
                 <TextView
+                    id="@+id/text_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="출발 날짜 : "
@@ -171,7 +172,7 @@
                     android:textSize="18sp" />
 
                 <TextView
-                    android:id="@+id/selectDateTextView"
+                    android:id="@+id/text_selectDate"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -181,7 +182,7 @@
                     android:maxLines="1"
                     android:textSize="16sp" />
                 <ImageButton
-                    android:id="@+id/selectDateImageButton"
+                    android:id="@+id/btn_selectDate"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="?android:attr/selectableItemBackground"
@@ -204,6 +205,7 @@
             android:orientation="horizontal"
             android:padding="16dp">
             <TextView
+                id="@+id/text_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -212,7 +214,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
             <TimePicker
-                android:id="@+id/departure_time_picker"
+                android:id="@+id/timePicker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:numbersTextColor="@color/black"
@@ -238,7 +240,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/black"
                 android:textStyle="bold"
-                android:text="상세설명"
+                android:text="간단 설명"
                 android:textSize="15sp" />
             <View
                 android:layout_width="match_parent"
@@ -246,20 +248,20 @@
                 android:layout_marginTop="3dp"
                 android:background="@android:color/darker_gray" />
             <EditText
-                android:id="@+id/descriptionEditText"
+                android:id="@+id/edit_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:gravity="top|start"
-                android:hint="상세 설명을 입력하세요."
+                android:hint="간단히 설명하세요"
                 android:maxLines="1"
                 android:padding="16dp"
                 android:textSize="16sp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
-        android:id="@+id/makeBtn"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_makeRoom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -267,7 +269,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="16dp"
         android:textSize="15sp"
-        android:textColor="@color/white"
+        android:textColor="@color/black"
         android:textStyle="bold"
         android:background="@drawable/btn_bg"
         android:text="개설하기" />

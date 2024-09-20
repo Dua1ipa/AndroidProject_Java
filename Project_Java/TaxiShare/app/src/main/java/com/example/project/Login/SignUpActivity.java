@@ -208,7 +208,6 @@ public class SignUpActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){  //사용자가 생성되면
                                     user = myAuth.getCurrentUser();  //사용자 정보 가져오기
-
                                     if(imgUri != null){
                                         imgRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                             @Override

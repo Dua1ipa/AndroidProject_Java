@@ -90,7 +90,6 @@ public class FindActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     @Override

@@ -36,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     private FirebaseAuth myAuth;
 
+    SharedPreferences sharedPreferences;
+
     ProgressDialog progressDialog;
 
     // 버튼
@@ -55,14 +57,9 @@ public class LoginActivity extends AppCompatActivity {
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("Users");
 
-//        String userID = firebaseUser.getUid();
-//        Log.d(TAG, "userID : " + userID);
-
-//        databaseReference.child("Male").setValue("Kim");
-
-        ID = findViewById(R.id.ID);
-        PW = findViewById(R.id.PW);
-        checkBox = findViewById(R.id.checkBox);
+        ID = findViewById(R.id.ID);              //아이디
+        PW = findViewById(R.id.PW);              //비밀번호
+        checkBox = findViewById(R.id.checkBox);  //자동 로그인
 
         progressDialog = new ProgressDialog(this);
 
@@ -90,13 +87,12 @@ public class LoginActivity extends AppCompatActivity {
                     myAuth.signInWithEmailAndPassword(email, pw).addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-                                if(checkBox.isChecked()){
-                                    SharedPreferences sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE);
+                            if(task.isSuccessful()){       //로그인 성공 했을 때
+                                if(checkBox.isChecked()){  //자동로그인 체크박스 체크했을 때
+                                    sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putBoolean("autoLogin", true);
                                     editor.putString("id", email);
-                                    editor.putString("pw", pw);
                                     editor.apply();
                                 }
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
@@ -104,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                                 showToast("로그인 성공");
                                 progressDialog.dismiss();
                                 finish();
-                            }else{
+                            }else{  //로그인 실패 했을 때
                                 showToast("로그인 정보가 일치하지 않습니다.");
                                 progressDialog.dismiss();
                                 ID.setText("");

@@ -2,13 +2,13 @@ package com.example.project.Data;
 
 public class TaxiRoom {
 
-    private  String userId , roomName,countPerson ,  departure,  destination, dateOfDeparture,timeOfDeparture,description,roomKey;
+    private  String uid , roomName,countPerson ,  departure,  destination, dateOfDeparture,timeOfDeparture,description,roomKey;
 
     public TaxiRoom() {}
 
-    public TaxiRoom(String roomKey,String userId, String roomName, String countPerson, String departure, String destination, String dateOfDeparture, String timeOfDeparture, String description) {
+    public TaxiRoom(String roomKey,String uid, String roomName, String countPerson, String departure, String destination, String dateOfDeparture, String timeOfDeparture, String description) {
         this.roomKey = roomKey;
-        this.userId = userId;
+        this.uid = uid;
         this.roomName = roomName;
         this.countPerson = countPerson;
         this.departure = departure;
@@ -26,10 +26,10 @@ public class TaxiRoom {
     }
 
     public String getUserId() {
-        return userId;
+        return uid;
     }
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.uid = uid;
     }
 
     public String getRoomName() {

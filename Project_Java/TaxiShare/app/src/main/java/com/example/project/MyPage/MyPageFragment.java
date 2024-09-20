@@ -4,7 +4,9 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -28,6 +30,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.project.Data.imgData;
 
+import com.example.project.Login.LoginActivity;
 import com.example.project.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -55,15 +58,17 @@ public class MyPageFragment extends Fragment {
     private DatabaseReference databaseReference;
     private StorageReference storageReference;
     private FirebaseUser user;
+    private FirebaseAuth auth;
     private FirebaseStorage firebaseStorage;
     private Uri imgUri;
 
     TextView textNick, textEmail;
     CircleImageView imageView;
-    AppCompatButton btn_editProfile;
+    AppCompatButton btn_editProfile, btn_logout;
+
+    SharedPreferences sharedPreferences;
 
     private ProgressBar progressBar;
-//    ProgressDialog progressDialog;
 
     private ActivityResultLauncher<Intent> resultLauncher;
 
@@ -77,10 +82,6 @@ public class MyPageFragment extends Fragment {
         textNick = viewGroup.findViewById(R.id.textNick);
         textEmail = viewGroup.findViewById(R.id.textEmail);
         progressBar = viewGroup.findViewById(R.id.progressBar);
-
-//        progressDialog = new ProgressDialog(getActivity());
-//        progressDialog.setMessage("데이터 불려오는 중입니다");
-//        progressDialog.show();
 
         showUserInfo();
 
@@ -111,6 +112,25 @@ public class MyPageFragment extends Fragment {
             }
         });
 
+        // 로그아웃
+        btn_logout = viewGroup.findViewById(R.id.btn_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharedPreferences = getActivity().getSharedPreferences("loginInfo", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();  //SharedPreferences에서 로그인 정보 삭제
+                editor.apply();
+                
+                auth = FirebaseAuth.getInstance();
+                auth.signOut();
+                
+                Intent intent = new Intent(getActivity(), LoginActivity.class);  //로그아웃 후 로그인 화면으로 이동
+                showToast("로그아웃 성공");
+                startActivity(intent);
+            }
+        });
+
         return viewGroup;
     }
 
@@ -130,7 +150,7 @@ public class MyPageFragment extends Fragment {
                     for(StorageReference item : listResult.getItems()){
                         String imgName = item.getName();
                         if(imgName.startsWith(uid) && imgName.endsWith(".png")){
-                            item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() { 
+                            item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     Glide.with(getActivity()).load(uri).into(imageView);
