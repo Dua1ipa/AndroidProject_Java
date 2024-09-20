@@ -45,7 +45,7 @@ public class MakeRoomFragment extends Fragment {
 
     TaxiRoom taxiRoom;
 
-    ImageView btn_back;
+    ImageView btn_back; 
 
     TextInputEditText edit_roomName;  //방 이름
     Spinner count_person, depart, arrive;  //인원, 출발지, 도착지
@@ -79,6 +79,16 @@ public class MakeRoomFragment extends Fragment {
 
         database = FirebaseDatabase.getInstance();    //파이어베이스 참조
         databaseReference = database.getReference();  //파이어베이스 -> 데이터베이스 참조
+
+        timePicker.setHour(Calendar.HOUR_OF_DAY);
+        timePicker.setMinute(Calendar.MINUTE);
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
+                hour = i;
+                minute = i1;
+            }
+        });
 
         // 달력 버튼 (출발 날짜)
         btn_selectDate = viewGroup.findViewById(R.id.btn_selectDate);
@@ -135,22 +145,6 @@ public class MakeRoomFragment extends Fragment {
         alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                if(text_selectDate.equals("")){  //출발 날짜가 공백이면
-                    text_date.setTextColor(getResources().getColor(R.color.navigation_color_mood));
-                    text_selectDate.setError("날짜를 선택해주세요");
-                }else if(timePicker.equals("")) {  //출발 시간이 공백이면
-                    text_time.setTextColor(getResources().getColor(R.color.navigation_color_mood));
-                }
-
-                timePicker.setHour(Calendar.HOUR_OF_DAY);
-                timePicker.setMinute(Calendar.MINUTE);
-                timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-                    @Override
-                    public void onTimeChanged(TimePicker timePicker, int i, int i1) {
-                        hour = i;
-                        minute = i1;
-                    }
-                });
 
                 String roomName = edit_roomName.getText().toString();       //방 이름
                 String person = count_person.getSelectedItem().toString();  //인원
@@ -160,20 +154,33 @@ public class MakeRoomFragment extends Fragment {
                 String selectedTime = String.format(Locale.getDefault(), "%02d시 : %02d분", hour, minute);
                 String desc = edit_description.getText().toString();    //설명
 
-                user = FirebaseAuth.getInstance().getCurrentUser();
-                String uid = user.getUid();
-                String roomKey = databaseReference.child(taxiRoomPath).push().getKey();  //고유 키 생성
+                if(roomName.equals("")){  //방 이름이 공백이면
+                    edit_roomName.setError("방 이름을 입력해주세요");
+                } else if(selectedDate.equals("")){  //출발 날짜가 공백이면
+                    text_date.setTextColor(getResources().getColor(R.color.navigation_color_mood));
+                    text_selectDate.setError("날짜를 선택해주세요");
+                }else if (selectedTime.equals("")){  //출발 시간이 공백이면
+                    text_time.setTextColor(getResources().getColor(R.color.navigation_color_mood));
+                }else{
+                    if (desc.equals("")){  //설명이 공백이면
+                        edit_description.setText("없음");
+                    }
 
-                taxiRoom = new TaxiRoom(roomKey, uid, roomName, person, departure, arrival, selectedDate, selectedTime, desc);
+                    user = FirebaseAuth.getInstance().getCurrentUser();
+                    String uid = user.getUid();
+                    String roomKey = databaseReference.child(taxiRoomPath).push().getKey();  //고유 키 생성
 
-                DatabaseReference roomRef = databaseReference.child("usersInfo").child(uid);
-                roomRef.child("TaxiRooms").child(roomKey).setValue(taxiRoom)
-                        .addOnSuccessListener(aVoid -> {
-                            showToast("방이 생성 되었습니다");
-                        })
-                        .addOnFailureListener(e -> {
-                            showToast("방 생성 실패");
-                        });
+                    taxiRoom = new TaxiRoom(roomKey, uid, roomName, person, departure, arrival, selectedDate, selectedTime, desc);
+
+                    DatabaseReference roomRef = databaseReference.child("usersInfo").child(uid);
+                    roomRef.child("TaxiRooms").child(roomKey).setValue(taxiRoom)
+                            .addOnSuccessListener(aVoid -> {
+                                showToast("방이 생성 되었습니다");
+                            })
+                            .addOnFailureListener(e -> {
+                                showToast("방 생성 실패");
+                            });
+                }
             }
         });
         alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {

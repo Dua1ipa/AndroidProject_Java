@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = auth.getCurrentUser();
 
-        sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE); 
+        sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("autoLogin", false);
 
         if(currentUser != null && isLoggedIn){
