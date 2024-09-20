@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <EditText
-                    android:id="@+id/id"
+                    android:id="@+id/editID"
                     android:layout_width="218dp"
                     android:layout_height="50dp"
                     android:backgroundTint="#41AFE5"

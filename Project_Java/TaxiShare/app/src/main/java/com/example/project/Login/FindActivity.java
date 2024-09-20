@@ -6,27 +6,33 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.project.R;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import com.example.project.Intro.StartActivity;
+import com.google.firebase.database.DatabaseReference;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class FindActivity extends AppCompatActivity {
     private static final String TAG = "FindActivity";
 
-    private FirebaseAuth mAuth;
+    // 파이어베이스
+    private DatabaseReference databaseReference;
+    private FirebaseAuth auth;
     private FirebaseUser user;
 
     Context ct;
     ImageButton btn_check, btn_back, btn_check2;
-    EditText id;
+    EditText editID;
 
     SweetAlertDialog pDialog;
 
@@ -35,19 +41,18 @@ public class FindActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find);
 
-        mAuth = FirebaseAuth.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
 
-        id = findViewById(R.id.id);
+        editID = findViewById(R.id.editID);
 
         // 뒤로가기 버튼
         btn_back = findViewById(R.id.btn_back);
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), StartActivity.class));
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));  //로그인 화면으로 이동
                 FindActivity.this.finish();
             }
         });
@@ -57,15 +62,32 @@ public class FindActivity extends AppCompatActivity {
         btn_check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // 이메일이 공백이면
-                if(id.getText().toString().isEmpty()){
+                if(editID.getText().toString().isEmpty()){  //이메일이 공백이면 오류 발생
                     SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(ct, SweetAlertDialog.ERROR_TYPE);
                     sweetAlertDialog.setTitleText("오류");
                     sweetAlertDialog.setContentText("이메일을 입력하세요"); 
                     sweetAlertDialog.show();
-                    return;
                 }
-
+                else{
+                    String email = editID.getText().toString() + "@cku.ac.kr";
+                    auth = FirebaseAuth.getInstance();
+                    auth.sendPasswordResetEmail(email)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){  //비밀번호 재설정 이메일이 전송되면
+                                        showToast("비밀번호 재설정 이메일이 전송되었습니다");
+                                        startActivity(new Intent(getApplicationContext(), LoginActivity.class));  //로그인 화면으로 이동
+                                        FindActivity.this.finish();
+                                    }else{  //이메일 전송이 실패하면
+                                        SweetAlertDialog sweetAlertDialog = new SweetAlertDialog(ct, SweetAlertDialog.ERROR_TYPE);
+                                        sweetAlertDialog.setTitleText("아이디 오류");
+                                        sweetAlertDialog.setContentText("해당 아이디가 없습니다");
+                                        sweetAlertDialog.show();
+                                    }
+                                }
+                            });
+                }
             }
         });
 
@@ -77,5 +99,7 @@ public class FindActivity extends AppCompatActivity {
         Intent intent = new Intent();
         setResult(RESULT_OK, intent);
     }
+
+    private void showToast(String msg){Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();}
 
 }

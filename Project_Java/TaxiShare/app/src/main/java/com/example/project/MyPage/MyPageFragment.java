@@ -84,8 +84,6 @@ public class MyPageFragment extends Fragment {
 
         showUserInfo();
 
-        progressBar.setVisibility(View.VISIBLE);  //프로그래스바 숨기기
-
         imgUri = null;  //선택된 이미지 uri
         resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
                     if(result.getResultCode() == RESULT_CANCELED) return;
@@ -124,6 +122,7 @@ public class MyPageFragment extends Fragment {
 
         if(user == null) return;
         else{
+            progressBar.setVisibility(View.VISIBLE);  //프로그래스바 보이기
             storageReference = FirebaseStorage.getInstance().getReference().child("userProfImg/");
             storageReference.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
                 @Override
@@ -131,10 +130,11 @@ public class MyPageFragment extends Fragment {
                     for(StorageReference item : listResult.getItems()){
                         String imgName = item.getName();
                         if(imgName.startsWith(uid) && imgName.endsWith(".png")){
-                            item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() { 
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     Glide.with(getActivity()).load(uri).into(imageView);
+                                    progressBar.setVisibility(View.GONE);  //프로그래스바 숨기기
                                 }
                             });
                         }
@@ -152,8 +152,6 @@ public class MyPageFragment extends Fragment {
 
                     textNick.setText(nickName);
                     textEmail.setText(email);
-
-                    progressBar.setVisibility(View.INVISIBLE);
                 }
 
                 @Override
