@@ -45,7 +45,7 @@ public class MakeRoomFragment extends Fragment {
 
     TaxiRoom taxiRoom;
 
-    ImageView btn_back; 
+    ImageView btn_back;
 
     TextInputEditText edit_roomName;  //방 이름
     Spinner count_person, depart, arrive;  //인원, 출발지, 도착지
