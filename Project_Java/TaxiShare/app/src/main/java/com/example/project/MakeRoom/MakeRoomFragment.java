@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.example.project.Data.TaxiRoom;
 
+import com.example.project.Home.HomeFragment;
 import com.example.project.R;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,11 +34,10 @@ import org.checkerframework.checker.units.qual.A;
 
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class MakeRoomFragment extends Fragment {
     private static final String TAG = "MakeRoomFragment";
-
-    private final  String taxiRoomPath ="Rooms/TaxiRooms";
 
     private FirebaseUser user;
     private FirebaseDatabase database;
@@ -57,7 +57,9 @@ public class MakeRoomFragment extends Fragment {
 
     TextView text_date, text_time;
 
-    int hour, minute;
+    int selectedHour, selectedMinute;;
+    int currentYear, currentMonth, currentDayOfMonth;
+    int selectedYear, selectedMonth, selectedDayOfMonth;
 
     private AlertDialog.Builder alertDialogBuilder;
 
@@ -80,40 +82,58 @@ public class MakeRoomFragment extends Fragment {
         database = FirebaseDatabase.getInstance();    //파이어베이스 참조
         databaseReference = database.getReference();  //파이어베이스 -> 데이터베이스 참조
 
-        timePicker.setHour(Calendar.HOUR_OF_DAY);
-        timePicker.setMinute(Calendar.MINUTE);
-        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
-            @Override
-            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
-                hour = i;
-                minute = i1;
-            }
-        });
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Seoul"));
 
         // 달력 버튼 (출발 날짜)
         btn_selectDate = viewGroup.findViewById(R.id.btn_selectDate);
         btn_selectDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar calendar = Calendar.getInstance();
-                int currentYear = calendar.get(Calendar.YEAR);
-                int currentMonth = calendar.get(Calendar.MONTH);
-                int currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+                currentYear = calendar.get(Calendar.YEAR);
+                currentMonth = calendar.get(Calendar.MONTH);
+                currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
-                            public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDayOfMonth) {
-                                if (selectedYear < currentYear ||
-                                        (selectedYear == currentYear && selectedMonth < currentMonth) ||
-                                        (selectedYear == currentYear && selectedMonth == currentMonth && selectedDayOfMonth < currentDayOfMonth)) {
+                            public void onDateSet(DatePicker view, int year, int month, int day) {
+                                if ((year < currentYear) ||
+                                        (year == currentYear && month < currentMonth) ||
+                                        (year == currentYear && month == currentMonth && day < currentDayOfMonth)) {
                                     showToast("지나간 날짜를 선택할 수 없습니다");
-                                } else {
-                                    String selectedDate = selectedYear+"년"+" "+(selectedMonth+1)+"월"+" "+selectedDayOfMonth+"일";
+                                }else {
+                                    selectedYear = year;
+                                    selectedMonth = month;
+                                    selectedDayOfMonth = day;
+
+                                    String selectedDate = year+"년"+" "+(month+1)+"월"+" "+day+"일";
                                     text_selectDate.setText(selectedDate);
                                 }
                             }
                         }, currentYear, currentMonth, currentDayOfMonth);
                 datePickerDialog.show();
+            }
+        });
+
+        // 시간 선택
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);  //서울 현재 시간
+        int minute = calendar.get(Calendar.MINUTE);     //서울 현재 분
+        timePicker.setHour(hour);
+        timePicker.setMinute(minute+1);
+
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
+                if (selectedYear == currentYear && selectedMonth == currentMonth && selectedDayOfMonth == currentDayOfMonth){
+                    if((i < hour) || (i == hour && i1 <= minute)){
+                        showToast("지나간 시간은 선택할 수 없습니다");
+                        timePicker.setHour(hour);
+                        timePicker.setMinute(minute+1);
+                    } else{
+                        selectedHour = i;
+                        selectedMinute = i1;
+                    }
+                }
             }
         });
 
@@ -151,31 +171,30 @@ public class MakeRoomFragment extends Fragment {
                 String departure = depart.getSelectedItem().toString();     //출발지
                 String arrival = arrive.getSelectedItem().toString();       //도착지
                 String selectedDate = text_selectDate.getText().toString(); //출발 날짜
-                String selectedTime = String.format(Locale.getDefault(), "%02d시 : %02d분", hour, minute);
+                String selectedTime = String.format(Locale.getDefault(), "%02d시 : %02d분", selectedHour, selectedMinute);
                 String desc = edit_description.getText().toString();    //설명
 
                 if(roomName.equals("")){  //방 이름이 공백이면
                     edit_roomName.setError("방 이름을 입력해주세요");
                 } else if(selectedDate.equals("")){  //출발 날짜가 공백이면
-                    text_date.setTextColor(getResources().getColor(R.color.navigation_color_mood));
                     text_selectDate.setError("날짜를 선택해주세요");
                 }else if (selectedTime.equals("")){  //출발 시간이 공백이면
-                    text_time.setTextColor(getResources().getColor(R.color.navigation_color_mood));
-                }else{
-                    if (desc.equals("")){  //설명이 공백이면
-                        edit_description.setText("없음");
-                    }
-
+                    text_time.setError("시간을 선택해주세요");
+                }else{  //아무 문제 없으면
                     user = FirebaseAuth.getInstance().getCurrentUser();
                     String uid = user.getUid();
-                    String roomKey = databaseReference.child(taxiRoomPath).push().getKey();  //고유 키 생성
-
-                    taxiRoom = new TaxiRoom(roomKey, uid, roomName, person, departure, arrival, selectedDate, selectedTime, desc);
+                    String roomKey = databaseReference.push().getKey();
+                    if (desc.equals("")){  //설명이 공백이면
+                        taxiRoom = new TaxiRoom(roomKey, uid, roomName, person, departure, arrival, selectedDate, selectedTime, "없음");
+                    }else{
+                        taxiRoom = new TaxiRoom(roomKey, uid, roomName, person, departure, arrival, selectedDate, selectedTime, desc);
+                    }
 
                     DatabaseReference roomRef = databaseReference.child("usersInfo").child(uid);
                     roomRef.child("TaxiRooms").child(roomKey).setValue(taxiRoom)
                             .addOnSuccessListener(aVoid -> {
                                 showToast("방이 생성 되었습니다");
+                                getFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
                             })
                             .addOnFailureListener(e -> {
                                 showToast("방 생성 실패");
