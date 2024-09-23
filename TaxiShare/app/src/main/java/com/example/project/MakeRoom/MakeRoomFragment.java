@@ -142,7 +142,7 @@ public class MakeRoomFragment extends Fragment {
         btn_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                getFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
             }
         });
 
