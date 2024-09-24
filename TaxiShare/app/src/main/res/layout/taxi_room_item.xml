@@ -137,15 +137,31 @@
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="3dp"
                     android:background="@color/blue_btn_bg_pressed_color" />
-                <TextView
-                    android:id="@+id/text_departureTime"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="출발시간"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:textSize="15sp"
-                    android:gravity="center" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:id="@+id/text_departureDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:text="출발날짜" />
+                    <TextView
+                        android:id="@+id/text_departureTime"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="출발시간"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"
+                        android:textSize="15sp"
+                        android:gravity="center" />
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 

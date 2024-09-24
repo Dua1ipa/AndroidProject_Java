@@ -120,6 +120,8 @@ public class MakeRoomFragment extends Fragment {
         int minute = calendar.get(Calendar.MINUTE);     //서울 현재 분
         timePicker.setHour(hour);
         timePicker.setMinute(minute+1);
+        selectedHour = hour;
+        selectedMinute = minute;
 
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
@@ -133,6 +135,9 @@ public class MakeRoomFragment extends Fragment {
                         selectedHour = i;
                         selectedMinute = i1;
                     }
+                }else{
+                    selectedHour = i;
+                    selectedMinute = i1;
                 }
             }
         });
@@ -170,7 +175,7 @@ public class MakeRoomFragment extends Fragment {
                 String person = count_person.getSelectedItem().toString();  //인원
                 String departure = depart.getSelectedItem().toString();     //출발지
                 String arrival = arrive.getSelectedItem().toString();       //도착지
-                String selectedDate = text_selectDate.getText().toString(); //출발 날짜
+                String selectedDate = String.format(Locale.getDefault(), "%d년 %d월 %d일", selectedYear, selectedMonth+1, selectedDayOfMonth);
                 String selectedTime = String.format(Locale.getDefault(), "%02d시 : %02d분", selectedHour, selectedMinute);
                 String desc = edit_description.getText().toString();    //설명
 

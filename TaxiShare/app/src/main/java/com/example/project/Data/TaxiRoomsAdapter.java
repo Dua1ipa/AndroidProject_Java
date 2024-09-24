@@ -1,5 +1,6 @@
 package com.example.project.Data;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,6 +58,7 @@ public class TaxiRoomsAdapter extends RecyclerView.Adapter<TaxiRoomsAdapter.View
         holder.countPerson.setText(taxiRoom.getCountPerson());
         holder.departure.setText(taxiRoom.getDeparture());
         holder.arrival.setText(taxiRoom.getDestination());
+        holder.departureDate.setText(taxiRoom.getDateOfDeparture());
         holder.departureTime.setText(taxiRoom.getTimeOfDeparture());
     }
 
@@ -69,7 +71,7 @@ public class TaxiRoomsAdapter extends RecyclerView.Adapter<TaxiRoomsAdapter.View
 
     //
     public class ViewHolder extends RecyclerView.ViewHolder{
-        public TextView roomName, countPerson, departure, arrival, departureTime;
+        public TextView roomName, countPerson, departure, arrival, departureDate ,departureTime;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -77,6 +79,7 @@ public class TaxiRoomsAdapter extends RecyclerView.Adapter<TaxiRoomsAdapter.View
             countPerson = itemView.findViewById(R.id.text_countPerson);
             departure = itemView.findViewById(R.id.text_departure);
             arrival = itemView.findViewById(R.id.text_arrival);
+            departureDate = itemView.findViewById(R.id.text_departureDate);
             departureTime = itemView.findViewById(R.id.text_departureTime);
             itemView.setOnClickListener(view -> itemClickListener.onItemClick(roomsList.get(getAdapterPosition())));
         }
