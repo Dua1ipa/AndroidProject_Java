@@ -73,6 +73,9 @@ dependencies {
     // 네이버 지도
     implementation 'com.naver.maps:map-sdk:3.19.1'
 
+    // 리사이클러뷰
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+
     // 스와이프 삭제
     implementation 'it.xabaras.android:recyclerview-swipedecorator:1.4'
 

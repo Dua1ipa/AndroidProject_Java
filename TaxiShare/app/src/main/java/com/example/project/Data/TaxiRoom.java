@@ -18,12 +18,8 @@ public class TaxiRoom {
         this.description = description;
     }
 
-    public String getRoomKey() {
-        return roomKey;
-    }
-    public void setRoomKey(String roomKey) {
-        this.roomKey = roomKey;
-    }
+    public String getRoomKey() {return roomKey;}
+    public void setRoomKey(String roomKey) {this.roomKey = roomKey;}
 
     public String getUserId() {
         return uid;

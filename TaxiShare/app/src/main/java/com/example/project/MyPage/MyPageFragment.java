@@ -138,7 +138,6 @@ public class MyPageFragment extends Fragment {
     private void showUserInfo(){
         user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
-        Log.d(TAG, "uid : " + uid);
 
         if(user == null) return;
         else{
