@@ -10,6 +10,8 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +34,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
@@ -57,11 +63,16 @@ public class HomeFragment extends Fragment {
 
     MakeRoomFragment makeRoomFragment;
 
+    private ExecutorService executorService;
+    private Handler handler;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
 
         dateList = new ArrayList<>();
+        handler = new Handler();
+        executorService = Executors.newSingleThreadExecutor();
 
         btn_all = viewGroup.findViewById(R.id.btn_all);
         btn_all.setOnClickListener(new View.OnClickListener() {
@@ -152,7 +163,6 @@ public class HomeFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user.getUid();
         text_count = viewGroup.findViewById(R.id.text_count);
-        updateRoomsCount();
 
         // 방 개설 버튼
         makeRoomFragment = new MakeRoomFragment();
@@ -168,6 +178,7 @@ public class HomeFragment extends Fragment {
         recyclerView = viewGroup.findViewById(R.id.recyclerView);
         roomsList = new ArrayList<>();
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));  //LayoutManager 설정 (수직 리스트)
+        startAsyncCount();
 
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("usersInfo/"+uid+"/TaxiRooms");  //Firebase 데이터베이스 참조
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {  //Firebase에서 데이터 가져오기
@@ -201,11 +212,9 @@ public class HomeFragment extends Fragment {
                         }
                     });  //Adapter 설정
                     recyclerView.setAdapter(taxiRoomsAdapter);
-
                     // ItemTouchHelper를 사용하여 스와이프 동작 추가
                     ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(taxiRoomsAdapter));
                     itemTouchHelper.attachToRecyclerView(recyclerView);
-                    updateRoomsCount();
                     taxiRoomsAdapter.notifyDataSetChanged();
                     showToast("방이 삭제되었습니다.");
                 }else{showToast("데이터가 없습니다");}
@@ -217,20 +226,27 @@ public class HomeFragment extends Fragment {
         return viewGroup;
     }
 
-    // 방 생성 개수 업데이트 함수 //
-    public void updateRoomsCount(){
-        databaseReference = FirebaseDatabase.getInstance().getReference("usersInfo").child(uid).child("TaxiRooms");
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+    // 방 개수 비동기 처리 함수 //
+    private void startAsyncCount(){
+        executorService.execute(new Runnable() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                long count = dataSnapshot.getChildrenCount();
-                text_count.setText(String.valueOf(count)+"개");
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(1000);  // 1초 대기
+                    } catch (InterruptedException e) {e.printStackTrace();}
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            text_count.setText(roomsList.size()+"개");
+                        }
+                    });
+                }
+
             }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
         });
     }
-
+    
     // 해당 날짜 방 검색 함수 //
     private void getDateRoom(int day){
         dateList.clear();
