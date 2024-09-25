@@ -1,8 +1,10 @@
 package com.example.project.Home;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -124,7 +126,28 @@ public class HomeFragment extends Fragment {
                         TaxiRoom taxiRoom = dataSnapshot.getValue(TaxiRoom.class);
                         roomsList.add(taxiRoom);
                     }
-                    taxiRoomsAdapter = new TaxiRoomsAdapter(roomsList);  //Adapter 설정
+                    taxiRoomsAdapter = new TaxiRoomsAdapter(roomsList, new TaxiRoomsAdapter.ItemClickListener() {
+                        @Override
+                        public void onItemClick(TaxiRoom item) {  //생성된 택시 방을 누르면
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                            alertDialogBuilder.setTitle("택시 방 참여 안내");
+                            alertDialogBuilder.setMessage("방에 참여 하시겠습니까?");
+                            alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                            alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+                        }
+                    });  //Adapter 설정
                     recyclerView.setAdapter(taxiRoomsAdapter);
 
                     // ItemTouchHelper를 사용하여 스와이프 동작 추가
@@ -139,11 +162,10 @@ public class HomeFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
 
-
         return viewGroup;
     }
 
-    //
+    // 방 생성 개수 업데이트 함수 //
     public void updateRoomsCount(){
         databaseReference = FirebaseDatabase.getInstance().getReference("usersInfo").child(uid).child("TaxiRooms");
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
