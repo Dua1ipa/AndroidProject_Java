@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ArrayList<TaxiRoom> roomsList;
+    private ArrayList<TaxiRoom> dateList;
     private TaxiRoomsAdapter taxiRoomsAdapter;
 
     MakeRoomFragment makeRoomFragment;
@@ -59,42 +61,92 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_home, container, false);
 
+        dateList = new ArrayList<>();
+
         btn_all = viewGroup.findViewById(R.id.btn_all);
+        btn_all.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                recyclerView.setAdapter(taxiRoomsAdapter);
+            }
+        });
 
         text_1 = viewGroup.findViewById(R.id.text_1);
         text_1.setText(getDay(0));
         btn_1 = viewGroup.findViewById(R.id.btn_1);
         btn_1.setText(getTime(0));
+        btn_1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDateRoom(0);
+            }
+        });
 
         text_2 = viewGroup.findViewById(R.id.text_2);
         text_2.setText(getDay(1));
         btn_2 = viewGroup.findViewById(R.id.btn_2);
         btn_2.setText(getTime(1));
+        btn_2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDateRoom(1);
+            }
+        });
 
         text_3 = viewGroup.findViewById(R.id.text_3);
         text_3.setText(getDay(2));
         btn_3 = viewGroup.findViewById(R.id.btn_3);
         btn_3.setText(getTime(2));
+        btn_3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDateRoom(2);
+            }
+        });
 
         text_4 = viewGroup.findViewById(R.id.text_4);
         text_4.setText(getDay(3));
         btn_4 = viewGroup.findViewById(R.id.btn_4);
         btn_4.setText(getTime(3));
+        btn_4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDateRoom(3);
+            }
+        });
 
         text_5 = viewGroup.findViewById(R.id.text_5);
         text_5.setText(getDay(4));
         btn_5 = viewGroup.findViewById(R.id.btn_5);
         btn_5.setText(getTime(4));
+        btn_5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDateRoom(4);
+            }
+        });
 
         text_6 = viewGroup.findViewById(R.id.text_6);
         text_6.setText(getDay(5));
         btn_6 = viewGroup.findViewById(R.id.btn_6);
         btn_6.setText(getTime(5));
+        btn_6.setOnClickListener(new View.OnClickListener() {
+             @Override
+             public void onClick(View view) {
+                 getDateRoom(5);
+             }
+        });
 
         text_7 = viewGroup.findViewById(R.id.text_7);
         text_7.setText(getDay(6));
         btn_7 = viewGroup.findViewById(R.id.btn_7);
         btn_7.setText(getTime(6));
+        btn_7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDateRoom(6);
+            }
+        });
 
         // 개설된 방 개수
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -177,6 +229,19 @@ public class HomeFragment extends Fragment {
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
+    }
+
+    // 해당 날짜 방 검색 함수 //
+    private void getDateRoom(int day){
+        dateList.clear();
+        for(TaxiRoom room : roomsList){
+            Log.d(TAG,room.getDateOfDeparture());
+            String today = getTime(day);
+            if(room.getDateOfDeparture().contains(today)){
+                dateList.add(room);
+            }
+        }
+        recyclerView.setAdapter(new TaxiRoomsAdapter(dateList));
     }
 
     // 파이어베이스에서 데이터 가져오기 //
