@@ -223,11 +223,6 @@ public class HomeFragment extends Fragment {
                         }
                     });  //Adapter 설정
                     recyclerView.setAdapter(taxiRoomsAdapter);
-                    // ItemTouchHelper를 사용하여 스와이프 동작 추가
-                    ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(taxiRoomsAdapter));
-                    itemTouchHelper.attachToRecyclerView(recyclerView);
-                    taxiRoomsAdapter.notifyDataSetChanged();
-                    showToast("방이 삭제되었습니다.");
                 }else{showToast("데이터가 없습니다");}
             }
             @Override
@@ -260,6 +255,7 @@ public class HomeFragment extends Fragment {
 
     // 해당 날짜 방 검색 함수 //
     private void getDateRoom(int day){
+
         dateList.clear();
         for(TaxiRoom room : roomsList){
             Log.d(TAG,room.getDateOfDeparture());
@@ -276,10 +272,7 @@ public class HomeFragment extends Fragment {
 
     // 시간 얻기 함수
     private String getTime(int day){
-        TimeZone timeZone;
         Calendar calendar = Calendar.getInstance();
-        Date date = new Date();
-        date = calendar.getTime();
         calendar.add(Calendar.DATE, day);
 
         SimpleDateFormat format = new SimpleDateFormat("dd일", Locale.KOREAN);
@@ -289,10 +282,7 @@ public class HomeFragment extends Fragment {
 
     // 날짜 얻기 함수
     private String getDay(int day){
-        TimeZone timeZone;
         Calendar calendar = Calendar.getInstance();
-        Date date = new Date();
-        date = calendar.getTime();
         calendar.add(Calendar.DATE, day);
 
         SimpleDateFormat format = new SimpleDateFormat("E", Locale.KOREAN);

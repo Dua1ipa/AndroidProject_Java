@@ -1,7 +1,9 @@
 package com.example.project.Data;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.content.Context;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,10 +18,12 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     private static final String TAG = "SwipeToDeleteCallback";
 
     private TaxiRoomsAdapter taxiRoomsAdapter;
+    private Context context;
 
-    public SwipeToDeleteCallback(TaxiRoomsAdapter adapter) {
+    public SwipeToDeleteCallback(TaxiRoomsAdapter adapter, Context context) {
         super(0, ItemTouchHelper.LEFT);  // 왼쪽 스와이프 허용
         taxiRoomsAdapter = adapter;
+        this.context = context;
     }
 
     @Override
@@ -32,6 +36,7 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
         int position = viewHolder.getAdapterPosition();  //스와이프된 항목의 위치를 가져옴
 
         taxiRoomsAdapter.deleteItem(position);  //Adapter에서 항목을 삭제하고 Firebase에서도 삭제
+        Toast.makeText(context, "방이 삭제되었습니다.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
