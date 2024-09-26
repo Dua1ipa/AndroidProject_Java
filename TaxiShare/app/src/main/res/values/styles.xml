@@ -2,5 +2,9 @@
 
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/blue_btn_bg_color</item>
+        <item name="colorPrimaryDark">@color/blue_btn_bg_color</item>  <!-- 상태바 색상 -->
+        <item name="colorAccent">@color/blue_btn_bg_color</item>
+        <item name="android:statusBarColor">@color/blue_btn_bg_color</item>  <!-- 상태바 색상을 명시적으로 설정 -->
     </style>
 </resources>

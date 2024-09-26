@@ -8,17 +8,25 @@
     android:orientation="vertical"
     tools:context=".Home.HomeFragment">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="252dp">
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
-            android:layout_height="252dp"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
+            android:layout_alignParentTop="true"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="1dp"
+            android:layout_marginTop="0dp"
+            android:background="@color/blue_btn_bg_pressed_color"
             android:src="@drawable/back_taxi" />
 
         <androidx.appcompat.widget.AppCompatButton

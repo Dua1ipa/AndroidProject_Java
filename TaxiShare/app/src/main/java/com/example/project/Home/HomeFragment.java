@@ -1,10 +1,12 @@
 package com.example.project.Home;
 
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,6 +16,9 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -48,13 +53,15 @@ import java.util.concurrent.Executors;
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
+    Toolbar toolbar;
+
     // 파이어베이스
     private FirebaseUser user;
     private DatabaseReference databaseReference;
     private String uid;
 
     TextView text_count, text_1,text_2,text_3,text_4,text_5,text_6,text_7;
-    Button btn_add, btn_login,btn_1,btn_all,btn_2,btn_3,btn_4,btn_5,btn_6,btn_7;
+    Button btn_add,btn_1,btn_all,btn_2,btn_3,btn_4,btn_5,btn_6,btn_7;
 
     private RecyclerView recyclerView;
     private ArrayList<TaxiRoom> roomsList;
@@ -73,6 +80,10 @@ public class HomeFragment extends Fragment {
         dateList = new ArrayList<>();
         handler = new Handler();
         executorService = Executors.newSingleThreadExecutor();
+
+        // 툴바
+        toolbar = viewGroup.findViewById(R.id.toolbar);
+        setHasOptionsMenu(true);
 
         btn_all = viewGroup.findViewById(R.id.btn_all);
         btn_all.setOnClickListener(new View.OnClickListener() {
@@ -246,7 +257,7 @@ public class HomeFragment extends Fragment {
             }
         });
     }
-    
+
     // 해당 날짜 방 검색 함수 //
     private void getDateRoom(int day){
         dateList.clear();
@@ -287,6 +298,16 @@ public class HomeFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("E", Locale.KOREAN);
 
         return format.format(calendar.getTime());
+    }
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     private void showToast(String msg){Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();}

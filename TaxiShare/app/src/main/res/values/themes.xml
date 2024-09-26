@@ -1,8 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Project" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/blue_btn_bg_pressed_color</item>
+        <item name="colorPrimaryDark">@color/blue_btn_bg_pressed_color</item>  <!-- 상태바 색상 -->
+        <item name="colorAccent">@color/blue_btn_bg_pressed_color</item>
+        <item name="android:statusBarColor">@color/blue_btn_bg_pressed_color</item>  <!-- 상태바 색상을 명시적으로 설정 -->
     </style>
 
     <style name="Theme.Project" parent="Base.Theme.Project" />
