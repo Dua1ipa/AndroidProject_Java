@@ -8,7 +8,7 @@
         android:id="@+id/bottom_join"
         android:icon="@drawable/nav_list"
         android:title="현황"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:itemIconTint="@color/navigation_color_mood"
         android:enabled="true"/>
 
@@ -16,7 +16,7 @@
         android:id="@+id/bottom_search"
         android:icon="@drawable/nav_list"
         android:title="검색"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:itemIconTint="@color/navigation_color_habit"
         android:enabled="true"/>
 
@@ -24,15 +24,15 @@
         android:id="@+id/bottom_home"
         android:icon="@drawable/nav_home"
         android:title="홈"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:itemIconTint="@color/navigation_color_add"
         android:enabled="true"/>
 
     <item
-        android:id="@+id/bottom_makeRoom"
+        android:id="@+id/bottom_chat"
         android:icon="@drawable/nav_add"
-        android:title="개설"
-        app:showAsAction="ifRoom"
+        android:title="채팅"
+        app:showAsAction="always"
         app:itemIconTint="@color/navigation_color_chart"
         android:enabled="true"/>
 
@@ -40,7 +40,7 @@
         android:id="@+id/bottom_myPage"
         android:icon="@drawable/nav_mypage"
         android:title="마이페이지"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         app:itemIconTint="@color/navigation_color_profile"
         android:enabled="true"/>
 

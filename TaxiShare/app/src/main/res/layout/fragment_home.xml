@@ -144,6 +144,7 @@
                 android:text="토"
                 android:gravity="center"
                 android:textSize="10sp"
+                android:textColor="@color/main_blue_color"
                 android:layout_marginRight="10sp"
                 android:textStyle="bold"/>
             <TextView
@@ -153,6 +154,7 @@
                 android:text="일"
                 android:gravity="center"
                 android:textSize="10sp"
+                android:textColor="@color/red_btn_bg_color"
                 android:layout_marginRight="10sp"
                 android:textStyle="bold"/>
         </LinearLayout>

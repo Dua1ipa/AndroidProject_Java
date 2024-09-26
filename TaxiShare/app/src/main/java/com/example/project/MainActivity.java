@@ -9,7 +9,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
+import com.example.project.Chatting.ChattingFragment;
 import com.example.project.Home.HomeFragment;
 import com.example.project.Join.JoinFragment;
 import com.example.project.MakeRoom.MakeRoomFragment;
@@ -27,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     MyPageFragment myPageFragment;
     SearchFragment searchFragment;
     JoinFragment joinFragment;
+    ChattingFragment chattingFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,35 +39,42 @@ public class MainActivity extends AppCompatActivity {
         // 프래그먼트
         homeFragment = new HomeFragment();
         makeRoomFragment = new MakeRoomFragment();
+        chattingFragment = new ChattingFragment();
         myPageFragment = new MyPageFragment();
         searchFragment = new SearchFragment();
         joinFragment = new JoinFragment();
 
         // 컨테이너
         container = findViewById(R.id.container);
-        getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
 
         // 권한 설정
 
         // 하단바 설정
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        if(savedInstanceState == null) {  //기본 화면을 설정 (처음 실행 시 HomeFragment를 보여줌)
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
+            bottomNavigationView.setSelectedItemId(R.id.bottom_home);
+        }
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            Fragment selectedFragment = null;
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if (item.getItemId() == R.id.bottom_home)
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment).commit();
-                else if (item.getItemId() == R.id.bottom_makeRoom)
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container, makeRoomFragment).commit();
+                    selectedFragment = homeFragment;
+                else if (item.getItemId() == R.id.bottom_chat)
+                    selectedFragment = chattingFragment;
                 else if (item.getItemId() == R.id.bottom_search)
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container, searchFragment).commit();
+                    selectedFragment = searchFragment;
                 else if (item.getItemId() == R.id.bottom_myPage)
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container, myPageFragment).commit();
+                    selectedFragment = myPageFragment;
                 else if (item.getItemId() == R.id.bottom_join)
-                    getSupportFragmentManager().beginTransaction().replace(R.id.container, joinFragment).commit();
-                return false;
+                    selectedFragment = joinFragment;
+
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, selectedFragment).commit();
+
+                return true;
             }
         });
-
     }
 
     private void showToast(String msg){Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();}

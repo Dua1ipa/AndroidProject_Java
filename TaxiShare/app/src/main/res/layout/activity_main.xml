@@ -26,9 +26,9 @@
         app:itemBackground="@color/blue_btn_bg_pressed_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:labelVisibilityMode="labeled"
         app:layout_constraintRight_toRightOf="parent"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_bottom">
-    </com.google.android.material.bottomnavigation.BottomNavigationView>>
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

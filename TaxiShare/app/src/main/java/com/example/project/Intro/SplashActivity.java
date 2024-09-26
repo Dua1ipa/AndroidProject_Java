@@ -42,29 +42,18 @@ public class SplashActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences("loginInfo", MODE_PRIVATE);
         boolean isLoggedIn = sharedPreferences.getBoolean("autoLogin", false);
 
-        if(currentUser != null && isLoggedIn){
-            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
-        }else{
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent intent = new Intent(SplashActivity.this, StartActivity.class);
-                    startActivity(intent);
-                    finish();
-//                nextActivity();
-                }
-            },1000);
-        }
+        new Handler().postDelayed(()->{
+            if(currentUser != null && isLoggedIn){
+                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }else{
+                Intent intent = new Intent(SplashActivity.this, StartActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }, 1000);
 
-    }
-
-    private class splashHandler implements Runnable{
-        @Override
-        public void run() {
-            startActivity(new Intent(getApplication(), LoginActivity.class));
-        }
     }
 
     @Override
@@ -79,8 +68,10 @@ public class SplashActivity extends AppCompatActivity {
                 }
             }
         }else{
-            Toast.makeText(SplashActivity.this, "권한이 거부되었습니다. 설정에서 권한을 허용해주세요.", Toast.LENGTH_SHORT).show();
+            showToast("권한이 거부되었습니다. 설정에서 권한을 허용해주세요.");
             finish();
         }
     }
+
+    private void showToast(String msg){Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();}
 }
