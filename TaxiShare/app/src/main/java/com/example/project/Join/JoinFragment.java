@@ -12,12 +12,15 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.project.Chatting.ChattingFragment;
+import com.example.project.Data.ChatData;
+import com.example.project.Data.ChatMemberData;
 import com.example.project.Data.SwipeToDeleteCallback;
 import com.example.project.Data.TaxiRoom;
 import com.example.project.Data.TaxiRoomsAdapter;
@@ -39,11 +42,14 @@ public class JoinFragment extends Fragment {
     // 파이어베이스
     private FirebaseUser user;
     private DatabaseReference databaseReference;
-    private String uid;
+    private String uid, nickName;
+    private FirebaseDatabase database;
 
     private RecyclerView recyclerView;
     private ArrayList<TaxiRoom> roomsList;
     private TaxiRoomsAdapter taxiRoomsAdapter;
+
+    ChatMemberData chatMemberData;
 
     AppCompatButton btn_joinedRoom, btn_createdRoom;
 
@@ -57,6 +63,9 @@ public class JoinFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user.getUid();
+
+        database = FirebaseDatabase.getInstance();    //파이어베이스 참조
+        databaseReference = database.getReference();  //파이어베이스 -> 데이터베이스 참조
 
         btn_createdRoom = viewGroup.findViewById(R.id.btn_createdRoom);
         btn_joinedRoom = viewGroup.findViewById(R.id.btn_joinedRoom);
@@ -104,6 +113,20 @@ public class JoinFragment extends Fragment {
                             alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("usersInfo").child(uid);
+                                    usersRef.addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            // 사용자 정보 가져오기
+                                            nickName = snapshot.child("NickName").getValue(String.class);    //닉네임
+                                            String roomKey = snapshot.child("TaxiRooms").child(item.getRoomKey()).getKey();
+                                            createdChatRoom(roomKey, uid, nickName);
+//                                            Log.d(TAG, chatMemberData.getNickName());
+                                        }
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {}
+                                    });
+//                                    Log.d(TAG, "사용자 정보: "+chatMemberData.getNickName()+" "+chatMemberData.getUid());
                                     getFragmentManager().beginTransaction().replace(R.id.container, new ChattingFragment()).commit();
                                 }
                             });
@@ -127,6 +150,13 @@ public class JoinFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
         });
+    }
+
+    // 채팅방 생성 //
+    private void createdChatRoom(String roomKey, String uid, String nickname){
+        DatabaseReference chatRef = databaseReference.child("chatsInfo");
+        chatMemberData = new ChatMemberData(uid, nickName);
+        chatRef.child(uid).child(roomKey).setValue(chatMemberData);
     }
 
     private void showToast(String msg){Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();}
