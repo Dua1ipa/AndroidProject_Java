@@ -1,10 +1,13 @@
 package com.example.project.Home;
 
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
@@ -22,15 +25,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.project.Data.SwipeToDeleteCallback;
 import com.example.project.Data.TaxiRoom;
 
 import com.example.project.Data.TaxiRoomsAdapter;
 import com.example.project.MakeRoom.MakeRoomFragment;
 import com.example.project.R;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +47,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import org.w3c.dom.Text;
 
@@ -50,13 +62,19 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
 
     Toolbar toolbar;
+    CircleImageView toolbar_image;
+    ImageView toolbar_alert, toolbar_search;
 
     // 파이어베이스
     private FirebaseUser user;
+    private FirebaseStorage firebaseStorage;
+    private StorageReference storageReference;
     private DatabaseReference databaseReference;
     private String uid;
 
@@ -83,7 +101,46 @@ public class HomeFragment extends Fragment {
 
         // 툴바
         toolbar = viewGroup.findViewById(R.id.toolbar);
-        setHasOptionsMenu(true);
+        toolbar_image = viewGroup.findViewById(R.id.toolbar_image);
+        toolbar_alert = viewGroup.findViewById(R.id.toolbar_alert);
+        toolbar_alert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        toolbar_search = viewGroup.findViewById(R.id.toolbar_search);
+        toolbar_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        firebaseStorage = FirebaseStorage.getInstance();
+        storageReference = firebaseStorage.getReference();
+        StorageReference imgRef = storageReference.child("userProfImg/");
+        imgRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+            @Override
+            public void onSuccess(ListResult listResult) {
+                for(StorageReference item : listResult.getItems()){
+                    String imgName = item.getName();
+                    if(imgName.startsWith(uid) && imgName.endsWith(".png")){
+                        item.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            @Override
+                            public void onSuccess(Uri uri) {
+                                setToolbarIcon(uri.toString());
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e(TAG, "이미지를 불러올 수 없습니다.", e);
+                            }
+                        });
+                    }
+                }
+            }
+        });
 
         btn_all = viewGroup.findViewById(R.id.btn_all);
         btn_all.setOnClickListener(new View.OnClickListener() {
@@ -290,14 +347,12 @@ public class HomeFragment extends Fragment {
         return format.format(calendar.getTime());
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        return super.onOptionsItemSelected(item);
+    // 툴바 프로필 이지미 변경 함수 //
+    private void setToolbarIcon(String imageUrl) {
+        Glide.with(this)
+                .load(imageUrl)
+                .into(toolbar_image)
+                .clearOnDetach();
     }
 
     private void showToast(String msg){Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();}

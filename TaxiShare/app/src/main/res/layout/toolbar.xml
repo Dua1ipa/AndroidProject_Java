@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.appcompat.widget.Toolbar
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
     android:id="@+id/toolbar"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -9,7 +10,32 @@
     android:elevation="4dp"
     app:title="@string/app_name"
     app:titleTextColor="@color/black"
-    android:background="@color/blue_btn_bg_pressed_color"
-    app:menu="@menu/toolbar">
+    android:background="@color/blue_btn_bg_pressed_color">
+
+    <!-- 툴바 안에 ImageView 추가 -->
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/toolbar_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="7dp"
+        android:src="@drawable/default_user" />
+
+    <ImageView
+        android:id="@+id/toolbar_alert"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="7dp"
+        android:src="@drawable/icon_alert" />
+
+    <ImageView
+        android:id="@+id/toolbar_search"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="right|center_vertical"
+        android:layout_marginRight="7dp"
+        android:src="@drawable/icon_search" />
 
 </androidx.appcompat.widget.Toolbar>
