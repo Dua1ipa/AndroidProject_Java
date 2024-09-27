@@ -1,6 +1,7 @@
 package com.example.project.Join;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.project.Chatting.ChattingFragment;
 import com.example.project.Data.SwipeToDeleteCallback;
 import com.example.project.Data.TaxiRoom;
 import com.example.project.Data.TaxiRoomsAdapter;
@@ -56,21 +58,27 @@ public class JoinFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user.getUid();
 
-        showCreatedRooms();
-
         btn_createdRoom = viewGroup.findViewById(R.id.btn_createdRoom);
+        btn_joinedRoom = viewGroup.findViewById(R.id.btn_joinedRoom);
+
+        showCreatedRooms();
+        btn_joinedRoom.setTextColor(Color.WHITE);
+        btn_createdRoom.setTextColor(Color.BLACK);
+
         btn_createdRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 recyclerView.setAdapter(taxiRoomsAdapter);
+                btn_joinedRoom.setTextColor(Color.WHITE);
+                btn_createdRoom.setTextColor(Color.BLACK);
             }
         });
 
-        btn_joinedRoom = viewGroup.findViewById(R.id.btn_joinedRoom);
         btn_joinedRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                btn_joinedRoom.setTextColor(Color.BLACK);
+                btn_createdRoom.setTextColor(Color.WHITE);
             }
         });
 
@@ -96,7 +104,7 @@ public class JoinFragment extends Fragment {
                             alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    getFragmentManager().beginTransaction().replace(R.id.container, new ChattingFragment()).commit();
                                 }
                             });
                             alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {

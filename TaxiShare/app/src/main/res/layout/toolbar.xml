@@ -37,5 +37,5 @@
         android:layout_gravity="right|center_vertical"
         android:layout_marginRight="7dp"
         android:src="@drawable/icon_search" />
-
+    
 </androidx.appcompat.widget.Toolbar>

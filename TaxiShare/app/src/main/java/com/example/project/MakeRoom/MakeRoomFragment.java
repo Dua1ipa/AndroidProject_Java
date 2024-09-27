@@ -194,12 +194,13 @@ public class MakeRoomFragment extends Fragment {
                     }else{
                         taxiRoom = new TaxiRoom(roomKey, uid, roomName, person, departure, arrival, selectedDate, selectedTime, desc);
                     }
-
+                    DatabaseReference taxiRef = databaseReference.child("roomsInfo");
                     DatabaseReference roomRef = databaseReference.child("usersInfo").child(uid);
                     roomRef.child("TaxiRooms").child(roomKey).setValue(taxiRoom)
                             .addOnSuccessListener(aVoid -> {
+                                taxiRef.child(roomKey).setValue(taxiRoom);
                                 showToast("방이 생성 되었습니다");
-                                getFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit();
+                                getFragmentManager().beginTransaction().replace(R.id.container, new HomeFragment()).commit(); 
                             })
                             .addOnFailureListener(e -> {
                                 showToast("방 생성 실패");

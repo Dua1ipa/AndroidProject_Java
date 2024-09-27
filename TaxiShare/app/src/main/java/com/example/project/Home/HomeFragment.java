@@ -37,7 +37,9 @@ import com.example.project.Data.TaxiRoom;
 
 import com.example.project.Data.TaxiRoomsAdapter;
 import com.example.project.MakeRoom.MakeRoomFragment;
+import com.example.project.MyPage.MyPageFragment;
 import com.example.project.R;
+import com.example.project.Search.SearchFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -102,18 +104,24 @@ public class HomeFragment extends Fragment {
         // 툴바
         toolbar = viewGroup.findViewById(R.id.toolbar);
         toolbar_image = viewGroup.findViewById(R.id.toolbar_image);
+        toolbar_image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getFragmentManager().beginTransaction().replace(R.id.container, new MyPageFragment()).commit();
+            }
+        });
         toolbar_alert = viewGroup.findViewById(R.id.toolbar_alert);
         toolbar_alert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                getFragmentManager().beginTransaction().replace(R.id.container, new AlertFragment()).commit();
             }
         });
         toolbar_search = viewGroup.findViewById(R.id.toolbar_search);
         toolbar_search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                getFragmentManager().beginTransaction().replace(R.id.container, new SearchFragment()).commit();
             }
         });
 
@@ -134,6 +142,7 @@ public class HomeFragment extends Fragment {
                         }).addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception e) {
+                                showToast("이미지를 불러올 수 없습니다.");
                                 Log.e(TAG, "이미지를 불러올 수 없습니다.", e);
                             }
                         });
