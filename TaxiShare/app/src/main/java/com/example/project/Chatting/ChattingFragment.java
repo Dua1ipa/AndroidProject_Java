@@ -121,24 +121,22 @@ public class ChattingFragment extends Fragment {
                     if (e != null) {
                         Log.e(TAG, "메시지 로드 실패", e);
                         return;
-                    } 
+                    }
                     if(queryDocumentSnapshots != null){
-                        //chatList.clear();  //기존 메시지 리스트를 초기화
-                        // Firestore에서 가져온 문서를 반복하면서 채팅 데이터를 리스트에 추가
-                        for(QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                        chatList.clear();  //기존 메시지 리스트를 초기화
+                        for(QueryDocumentSnapshot doc : queryDocumentSnapshots){  //Firestore에서 가져온 문서를 반복하면서 채팅 데이터를 리스트에 추가
                             String nickName = doc.getString("nickName");
                             String senderID = doc.getString("senderID");
                             String message = doc.getString("message");
 
-                            Log.d(TAG, "닉네임: " + nickName + ", 메시지: " + message);  // 데이터가 제대로 불러와졌는지 확인
+                            Log.d(TAG, "닉네임: " + nickName + ", 메시지: " + message);  //데이터가 제대로 불러와졌는지 확인
 
-                            // ChatData 객체 생성
-                            ChatData chatData = new ChatData(nickName, uid, message, new Timestamp(new Date()));
+                            ChatData chatData = new ChatData(nickName, uid, message, new Timestamp(new Date()));  //ChatData 객체 생성
 
                             chatList.add(chatData);  //메시지를 리스트에 추가
                         }
                     }
-                    chatAdapter.notifyDataSetChanged();  // 어댑터에 변경사항을 알리고 RecyclerView 갱신
+                    chatAdapter.notifyDataSetChanged();  //어댑터에 변경사항을 알리고 RecyclerView 갱신
                     recyclerView.scrollToPosition(chatList.size()-1);  //최신 메시지로 스크롤
                 });
     }
