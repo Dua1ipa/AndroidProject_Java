@@ -12,24 +12,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.example.project.Data.ChatData;
 import com.example.project.R;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ChattingFragment extends Fragment {
+    private static final String TAG = "ChattingFragment";
 
     // 파이어베이스
     private FirebaseFirestore firestore;
@@ -37,12 +44,12 @@ public class ChattingFragment extends Fragment {
     private List<ChatData> chatList;
     private FirebaseUser user;
     private DatabaseReference databaseReference;
-    private String uid, nickName;
+    private String uid, nickName, roomKey;
     private FirebaseDatabase database;
     private ChatAdapter chatAdapter;
 
     private EditText messageInput;
-    private Button sendButton;
+    private ImageView sendButton;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,6 +60,12 @@ public class ChattingFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         uid = user.getUid();
+
+        Bundle args = getArguments();
+        roomKey = args.getString("roomKey");
+        nickName = args.getString("nickName");
+        Log.d(TAG, roomKey);
+        Log.d(TAG, nickName);
 
         // RecyclerView 설정
         recyclerView = viewGroup.findViewById(R.id.recycler_view);
@@ -66,7 +79,13 @@ public class ChattingFragment extends Fragment {
         sendButton = viewGroup.findViewById(R.id.send_button);
 
         // 메시지 전송 버튼 클릭 이벤트
-        sendButton.setOnClickListener(v -> sendMessage());
+        sendButton.setOnClickListener(view -> {
+            String messageText = messageInput.getText().toString().trim();
+            if(!messageText.isEmpty()){
+                sendMessage(messageText);
+                messageInput.setText("");  // 입력 필드 비우기
+            }
+        });
 
         // Firestore에서 실시간 메시지 읽기
         listenForMessages();
@@ -74,43 +93,53 @@ public class ChattingFragment extends Fragment {
         return viewGroup;
     }
 
-    private void sendMessage(){
-        String messageText = messageInput.getText().toString().trim();
-        if (!messageText.isEmpty()) {  // 채팅 메시지 데이터 생성
-            Map<String, Object> message = new HashMap<>();
-            message.put("senderId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-            message.put("message", messageText);
-            message.put("timestamp", FieldValue.serverTimestamp());
+    // 메시지 전송 //
+    private void sendMessage(String messageText){
+        ChatData chatData = new ChatData(nickName,uid,messageText,new Timestamp(new Date()));
 
-            // Firestore에 메시지 추가
-            firestore.collection("chatsInfo")
-                    .add(message)
-                    .addOnSuccessListener(documentReference -> {  // 메시지 전송 성공
-                        messageInput.setText("");  // 입력 필드 비우기
-                    })
-                    .addOnFailureListener(e -> {  // 메시지 전송 실패 처리
-                        Log.e("ChatFragment", "메시지 전송 실패", e);
-                    });
-        }
+        // Firestore에 메시지 추가
+        firestore.collection("chatsInfo")
+                .document(roomKey)
+                .collection(uid)
+                .add(chatData)
+                .addOnSuccessListener(documentReference -> {  // 메시지 전송 성공
+                    Log.e(TAG, "메시지 전송 성공");
+                })
+                .addOnFailureListener(e -> {  // 메시지 전송 실패 처리
+                    Log.e(TAG, "메시지 전송 실패", e);
+                });
     }
 
+    // 실시간으로 메시지 수신하는 메소드 //
     private void listenForMessages(){
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         firestore.collection("chatsInfo")
-                .orderBy("timestamp", Query.Direction.ASCENDING)
+                .document(roomKey)
+                .collection(uid)
+                .orderBy("time", Query.Direction.ASCENDING)
                 .addSnapshotListener((queryDocumentSnapshots, e) -> {
                     if (e != null) {
-                        Log.e("ChatFragment", "메시지 로드 실패", e);
+                        Log.e(TAG, "메시지 로드 실패", e);
                         return;
-                    }
-                    if (queryDocumentSnapshots != null) {
-                        chatList.clear();
-                        for (DocumentSnapshot snapshot : queryDocumentSnapshots) {
-                            ChatData chatMessage = snapshot.toObject(ChatData.class);
-                            chatList.add(chatMessage);
+                    } 
+                    if(queryDocumentSnapshots != null){
+                        //chatList.clear();  //기존 메시지 리스트를 초기화
+                        // Firestore에서 가져온 문서를 반복하면서 채팅 데이터를 리스트에 추가
+                        for(QueryDocumentSnapshot doc : queryDocumentSnapshots){
+                            String nickName = doc.getString("nickName");
+                            String senderID = doc.getString("senderID");
+                            String message = doc.getString("message");
+
+                            Log.d(TAG, "닉네임: " + nickName + ", 메시지: " + message);  // 데이터가 제대로 불러와졌는지 확인
+
+                            // ChatData 객체 생성
+                            ChatData chatData = new ChatData(nickName, uid, message, new Timestamp(new Date()));
+
+                            chatList.add(chatData);  //메시지를 리스트에 추가
                         }
-                        chatAdapter.notifyDataSetChanged();
-//                        recyclerView.smoothScrollToPosition(chatList.size() - 1);
                     }
+                    chatAdapter.notifyDataSetChanged();  // 어댑터에 변경사항을 알리고 RecyclerView 갱신
+                    recyclerView.scrollToPosition(chatList.size()-1);  //최신 메시지로 스크롤
                 });
     }
 

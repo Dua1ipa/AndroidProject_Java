@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -113,6 +114,7 @@ public class JoinFragment extends Fragment {
                             alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    Bundle bundle = new Bundle();
                                     DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("usersInfo").child(uid);
                                     usersRef.addValueEventListener(new ValueEventListener() {
                                         @Override
@@ -121,13 +123,21 @@ public class JoinFragment extends Fragment {
                                             nickName = snapshot.child("NickName").getValue(String.class);    //닉네임
                                             String roomKey = snapshot.child("TaxiRooms").child(item.getRoomKey()).getKey();
                                             createdChatRoom(roomKey, uid, nickName);
-//                                            Log.d(TAG, chatMemberData.getNickName());
+
+                                            bundle.putString("roomKey", item.getRoomKey());
+                                            bundle.putString("nickName", nickName);
+
+                                            ChattingFragment chattingFragment = new ChattingFragment();
+                                            chattingFragment.setArguments(bundle);
+
+                                            FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+                                            transaction.replace(R.id.container, chattingFragment);
+                                            transaction.addToBackStack(null);
+                                            transaction.commit();
                                         }
                                         @Override
                                         public void onCancelled(@NonNull DatabaseError error) {}
                                     });
-//                                    Log.d(TAG, "사용자 정보: "+chatMemberData.getNickName()+" "+chatMemberData.getUid());
-                                    getFragmentManager().beginTransaction().replace(R.id.container, new ChattingFragment()).commit();
                                 }
                             });
                             alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
