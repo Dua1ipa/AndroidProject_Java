@@ -43,7 +43,7 @@ public class JoinFragment extends Fragment {
     // 파이어베이스
     private FirebaseUser user;
     private DatabaseReference databaseReference;
-    private String uid, nickName;
+    private String uid, nickName, roomName;
     private FirebaseDatabase database;
 
     private RecyclerView recyclerView;
@@ -122,11 +122,13 @@ public class JoinFragment extends Fragment {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             // 사용자 정보 가져오기
                                             nickName = snapshot.child("NickName").getValue(String.class);    //닉네임
+                                            roomName = snapshot.child("TaxiRooms").child(item.getRoomKey()).child("roomName").getValue(String.class);    //방이름
                                             String roomKey = snapshot.child("TaxiRooms").child(item.getRoomKey()).getKey();
                                             createdChatRoom(roomKey, uid, nickName);
 
                                             bundle.putString("roomKey", item.getRoomKey());
                                             bundle.putString("nickName", nickName);
+                                            bundle.putString("roomName", roomName);
 
                                             ChattingFragment chattingFragment = new ChattingFragment();
                                             chattingFragment.setArguments(bundle);

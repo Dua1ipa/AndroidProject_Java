@@ -2,7 +2,9 @@ package com.example.project.Chatting;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.project.Data.ChatData;
 import com.example.project.R;
@@ -45,11 +48,17 @@ public class ChattingFragment extends Fragment {
     private FirebaseUser user;
     private DatabaseReference databaseReference;
     private String uid, nickName, roomKey;
+    private String roomName;
     private FirebaseDatabase database;
     private ChatAdapter chatAdapter;
 
     private EditText messageInput;
     private ImageView sendButton;
+
+    // 툴바
+    Toolbar toolbar_chat;
+    private ImageView toolbar_back, toolbar_group;
+    private TextView toolbar_title;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,8 +73,28 @@ public class ChattingFragment extends Fragment {
         Bundle args = getArguments();
         roomKey = args.getString("roomKey");
         nickName = args.getString("nickName");
-        Log.d(TAG, roomKey);
-        Log.d(TAG, nickName);
+        roomName = args.getString("roomName");
+
+        // 툴바 설정
+        toolbar_chat = viewGroup.findViewById(R.id.toolbar_chat);
+        toolbar_back = viewGroup.findViewById(R.id.toolbar_back);
+        toolbar_back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        toolbar_title = viewGroup.findViewById(R.id.toolbar_title);
+        toolbar_title.setText(roomName);
+
+        toolbar_group = viewGroup.findViewById(R.id.toolbar_group);
+        toolbar_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
 
         // RecyclerView 설정
         recyclerView = viewGroup.findViewById(R.id.recycler_view);
