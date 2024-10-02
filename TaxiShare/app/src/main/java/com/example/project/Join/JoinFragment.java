@@ -48,6 +48,7 @@ public class JoinFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private ArrayList<TaxiRoom> roomsList;
+    private ArrayList<ChatData> chatList;
     private TaxiRoomsAdapter taxiRoomsAdapter;
 
     ChatMemberData chatMemberData;
@@ -105,7 +106,7 @@ public class JoinFragment extends Fragment {
                         TaxiRoom taxiRoom = dataSnapshot.getValue(TaxiRoom.class);
                         roomsList.add(taxiRoom);
                     }
-                    taxiRoomsAdapter = new TaxiRoomsAdapter(roomsList, new TaxiRoomsAdapter.ItemClickListener() {
+                    taxiRoomsAdapter = new TaxiRoomsAdapter(roomsList, chatList, new TaxiRoomsAdapter.ItemClickListener() {
                         @Override
                         public void onItemClick(TaxiRoom item) {  //생성된 택시 방을 누르면
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
@@ -154,6 +155,7 @@ public class JoinFragment extends Fragment {
                     // ItemTouchHelper를 사용하여 스와이프 동작 추가
                     ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(taxiRoomsAdapter, getContext()));
                     itemTouchHelper.attachToRecyclerView(recyclerView);
+
                     taxiRoomsAdapter.notifyDataSetChanged();
                 }else{showToast("데이터가 없습니다");}
             }

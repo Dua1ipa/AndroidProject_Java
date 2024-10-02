@@ -95,7 +95,7 @@ public class ChattingFragment extends Fragment {
 
     // 메시지 전송 //
     private void sendMessage(String messageText){
-        ChatData chatData = new ChatData(nickName,uid,messageText,new Timestamp(new Date()));
+        ChatData chatData = new ChatData(roomKey, nickName,uid,messageText,new Timestamp(new Date()));
 
         // Firestore에 메시지 추가
         firestore.collection("chatsInfo")
@@ -131,7 +131,7 @@ public class ChattingFragment extends Fragment {
 
                             Log.d(TAG, "닉네임: " + nickName + ", 메시지: " + message);  //데이터가 제대로 불러와졌는지 확인
 
-                            ChatData chatData = new ChatData(nickName, uid, message, new Timestamp(new Date()));  //ChatData 객체 생성
+                            ChatData chatData = new ChatData(roomKey, nickName, uid, message, new Timestamp(new Date()));  //ChatData 객체 생성
 
                             chatList.add(chatData);  //메시지를 리스트에 추가
                         }
