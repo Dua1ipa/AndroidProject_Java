@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.project.Data.ChatData;
+import com.example.project.Intro.SecondFragment;
+import com.example.project.Join.JoinFragment;
 import com.example.project.R;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
@@ -60,6 +62,8 @@ public class ChattingFragment extends Fragment {
     private ImageView toolbar_back, toolbar_group;
     private TextView toolbar_title;
 
+    FragmentTransaction transaction;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_chatting, container, false);
@@ -81,7 +85,10 @@ public class ChattingFragment extends Fragment {
         toolbar_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                transaction = getParentFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, new JoinFragment());
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 
