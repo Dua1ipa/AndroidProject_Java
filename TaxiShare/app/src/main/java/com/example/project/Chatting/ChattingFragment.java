@@ -12,33 +12,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.project.Data.ChatData;
-import com.example.project.Intro.SecondFragment;
-import com.example.project.Join.JoinFragment;
+import com.example.project.Join.JoinedFragment;
 import com.example.project.R;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChattingFragment extends Fragment {
     private static final String TAG = "ChattingFragment";
@@ -81,20 +73,24 @@ public class ChattingFragment extends Fragment {
 
         // 툴바 설정
         toolbar_chat = viewGroup.findViewById(R.id.toolbar_chat);
+
+        // 툴바 - 뒤로가기 버튼
         toolbar_back = viewGroup.findViewById(R.id.toolbar_back);
         toolbar_back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 transaction = getParentFragmentManager().beginTransaction();
-                transaction.replace(R.id.container, new JoinFragment());
+                transaction.replace(R.id.container, new JoinedFragment());
                 transaction.addToBackStack(null);
                 transaction.commit();
             }
         });
 
+        // 툴바 - 제목
         toolbar_title = viewGroup.findViewById(R.id.toolbar_title);
         toolbar_title.setText(roomName);
 
+        // 툴바 - 참여자 그룹
         toolbar_group = viewGroup.findViewById(R.id.toolbar_group);
         toolbar_group.setOnClickListener(new View.OnClickListener() {
             @Override

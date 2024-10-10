@@ -32,10 +32,13 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.example.project.Chatting.ChattingFragment;
 import com.example.project.Data.SwipeToDeleteCallback;
 import com.example.project.Data.TaxiRoom;
 
 import com.example.project.Data.TaxiRoomsAdapter;
+import com.example.project.Join.CurrentFragment;
+import com.example.project.Join.JoinedFragment;
 import com.example.project.MakeRoom.MakeRoomFragment;
 import com.example.project.MyPage.MyPageFragment;
 import com.example.project.R;
@@ -257,12 +260,13 @@ public class HomeFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));  //LayoutManager 설정 (수직 리스트)
         startAsyncCount();
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("usersInfo/"+uid+"/TaxiRooms");  //Firebase 데이터베이스 참조
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("roomsInfo");  //Firebase 데이터베이스 참조
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {  //Firebase에서 데이터 가져오기
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){  //택시 방이 개설 되어 있으면
                     for(DataSnapshot dataSnapshot : snapshot.getChildren()){  //DB 순회 하면서 읽기
+                        if(dataSnapshot.getKey().equals(uid)) continue;  // 개설자는 제외
                         TaxiRoom taxiRoom = dataSnapshot.getValue(TaxiRoom.class);
                         roomsList.add(taxiRoom);
                     }
@@ -275,7 +279,7 @@ public class HomeFragment extends Fragment {
                             alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-
+                                    getFragmentManager().beginTransaction().replace(R.id.container, new JoinedFragment()).commit(); 
                                 }
                             });
                             alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {

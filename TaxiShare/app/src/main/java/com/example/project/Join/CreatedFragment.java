@@ -1,19 +1,16 @@
 package com.example.project.Join;
 
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +22,6 @@ import com.example.project.Data.ChatMemberData;
 import com.example.project.Data.SwipeToDeleteCallback;
 import com.example.project.Data.TaxiRoom;
 import com.example.project.Data.TaxiRoomsAdapter;
-import com.example.project.Home.HomeFragment;
 import com.example.project.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,8 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class JoinFragment extends Fragment {
-    private static final String TAG = "JoinFragment";
+public class CreatedFragment extends Fragment {
+    private static final String TAG = "CreatedFragment";
 
     // 파이어베이스
     private FirebaseUser user;
@@ -53,11 +49,9 @@ public class JoinFragment extends Fragment {
 
     ChatMemberData chatMemberData;
 
-    AppCompatButton btn_joinedRoom, btn_createdRoom;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_join, container, false);
+        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_created, container, false);
 
         recyclerView = viewGroup.findViewById(R.id.recyclerView);
         roomsList = new ArrayList<>();
@@ -69,29 +63,8 @@ public class JoinFragment extends Fragment {
         database = FirebaseDatabase.getInstance();    //파이어베이스 참조
         databaseReference = database.getReference();  //파이어베이스 -> 데이터베이스 참조
 
-        btn_createdRoom = viewGroup.findViewById(R.id.btn_createdRoom);
-        btn_joinedRoom = viewGroup.findViewById(R.id.btn_joinedRoom);
-
         showCreatedRooms();
-        btn_joinedRoom.setTextColor(Color.WHITE);
-        btn_createdRoom.setTextColor(Color.BLACK);
-
-        btn_createdRoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                recyclerView.setAdapter(taxiRoomsAdapter);
-                btn_joinedRoom.setTextColor(Color.WHITE);
-                btn_createdRoom.setTextColor(Color.BLACK);
-            }
-        });
-
-        btn_joinedRoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                btn_joinedRoom.setTextColor(Color.BLACK);
-                btn_createdRoom.setTextColor(Color.WHITE);
-            }
-        });
+        recyclerView.setAdapter(taxiRoomsAdapter);
 
         return viewGroup;
     }
@@ -173,6 +146,7 @@ public class JoinFragment extends Fragment {
         chatRef.child(uid).child(roomKey).setValue(chatMemberData);
     }
 
-    private void showToast(String msg){Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();}
+    private void showToast(String msg){
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();}
 
 }

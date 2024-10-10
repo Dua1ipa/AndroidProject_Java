@@ -1,24 +1,22 @@
 package com.example.project;
 
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import com.example.project.Chatting.ChattingFragment;
 import com.example.project.Home.HomeFragment;
-import com.example.project.Join.JoinFragment;
+import com.example.project.Join.CurrentFragment;
+import com.example.project.Join.JoinedFragment;
 import com.example.project.MakeRoom.MakeRoomFragment;
 import com.example.project.MyPage.MyPageFragment;
 import com.example.project.Search.SearchFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.naver.maps.map.MapFragment;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -28,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     MakeRoomFragment makeRoomFragment;
     MyPageFragment myPageFragment;
     SearchFragment searchFragment;
-    JoinFragment joinFragment;
+    CurrentFragment currentFragment;
     ChattingFragment chattingFragment;
 
     @Override
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         chattingFragment = new ChattingFragment();
         myPageFragment = new MyPageFragment();
         searchFragment = new SearchFragment();
-        joinFragment = new JoinFragment();
+        currentFragment = new CurrentFragment();
 
         // 컨테이너
         container = findViewById(R.id.container);
@@ -67,8 +65,8 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = searchFragment;
                 else if (item.getItemId() == R.id.bottom_myPage)
                     selectedFragment = myPageFragment;
-                else if (item.getItemId() == R.id.bottom_join)
-                    selectedFragment = joinFragment;
+                else if (item.getItemId() == R.id.bottom_current)
+                    selectedFragment = currentFragment;
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.container, selectedFragment).commit();
 

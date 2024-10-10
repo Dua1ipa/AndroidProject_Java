@@ -47,4 +47,5 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             text_nickName = itemView.findViewById(R.id.text_nickName);
         }
     }
+
 }
