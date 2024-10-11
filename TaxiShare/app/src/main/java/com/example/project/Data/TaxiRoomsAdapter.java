@@ -35,6 +35,8 @@ public class TaxiRoomsAdapter extends RecyclerView.Adapter<TaxiRoomsAdapter.View
     private ArrayList<ChatData> chatList;
     private ItemClickListener itemClickListener;
 
+    private String uid;
+
     // 생성자
     public TaxiRoomsAdapter(ArrayList<TaxiRoom> roomsList){
         this.roomsList = roomsList;
@@ -103,7 +105,7 @@ public class TaxiRoomsAdapter extends RecyclerView.Adapter<TaxiRoomsAdapter.View
         String roomKey = taxiRoom.getRoomKey();
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String uid = user.getUid();
+        uid = user.getUid();
 
         // Firebase에서 해당 항목 삭제
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("usersInfo/"+uid+"/TaxiRooms").child(roomKey);

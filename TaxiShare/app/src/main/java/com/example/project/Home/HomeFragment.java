@@ -264,36 +264,54 @@ public class HomeFragment extends Fragment {
         databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {  //Firebase에서 데이터 가져오기
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){  //택시 방이 개설 되어 있으면
-                    for(DataSnapshot dataSnapshot : snapshot.getChildren()){  //DB 순회 하면서 읽기
-                        if(dataSnapshot.getKey().equals(uid)) continue;  // 개설자는 제외
-                        TaxiRoom taxiRoom = dataSnapshot.getValue(TaxiRoom.class);
-                        roomsList.add(taxiRoom);
-                    }
-                    taxiRoomsAdapter = new TaxiRoomsAdapter(roomsList, new TaxiRoomsAdapter.ItemClickListener() {
-                        @Override
-                        public void onItemClick(TaxiRoom item) {  //생성된 택시 방을 누르면
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-                            alertDialogBuilder.setTitle("택시 방 참여 안내");
-                            alertDialogBuilder.setMessage("방에 참여 하시겠습니까?");
-                            alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    getFragmentManager().beginTransaction().replace(R.id.container, new JoinedFragment()).commit(); 
-                                }
-                            });
-                            alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+                for(DataSnapshot dataSnapshot : snapshot.getChildren()){  //DB 순회 하면서 읽기
+                    Log.d(TAG,dataSnapshot+" ");
+//                    Log.d(TAG,uid+" ");
+//                    Log.d(TAG,dataSnapshot.getKey()+" ");
+                    if(dataSnapshot.getKey().equals(uid)) continue;
 
-                                }
-                            });
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
+                    // dataSnapshot 내부의 특정 key 값에 접근해서 roomName 읽기
+                    for (DataSnapshot innerSnapshot : dataSnapshot.getChildren()) {
+                        TaxiRoom taxiRoom = innerSnapshot.getValue(TaxiRoom.class);  // TaxiRoom 객체로 변환
+                        if (taxiRoom != null) {
+                            roomsList.add(taxiRoom);
+                        } else {
+                            Log.d(TAG, "TaxiRoom is null"); 
                         }
-                    });  //Adapter 설정
-                    recyclerView.setAdapter(taxiRoomsAdapter);
-                }else{showToast("데이터가 없습니다");}
+                    }
+
+                }
+                taxiRoomsAdapter = new TaxiRoomsAdapter(roomsList, new TaxiRoomsAdapter.ItemClickListener() {
+                    @Override
+                    public void onItemClick(TaxiRoom item) {  //생성된 택시 방을 누르면
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+                        alertDialogBuilder.setTitle("택시 방 참여 안내");
+                        alertDialogBuilder.setMessage("방에 참여 하시겠습니까?");
+                        alertDialogBuilder.setPositiveButton("예", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                DatabaseReference roomRef = databaseReference.child("usersInfo").child(uid);
+//                                roomRef.child("JoinedRooms").child(roomKey).setValue(taxiRoom)
+//                                        .addOnSuccessListener(aVoid -> {
+//                                            showToast("방에 참여 했습니다.");
+//                                            getFragmentManager().beginTransaction().replace(R.id.container, new JoinedFragment()).commit();
+//                                        })
+//                                        .addOnFailureListener(e -> {
+//                                            showToast("방 참여 실패");
+//                                        });
+                            }
+                        });
+                        alertDialogBuilder.setNegativeButton("아니오", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+                    }
+                });  //Adapter 설정
+                recyclerView.setAdapter(taxiRoomsAdapter);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {}
